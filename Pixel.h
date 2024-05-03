@@ -27,6 +27,14 @@ public:
      */
     PixelType getType(){return type;}
 
+    /**
+     * @brief Represents 2d coordinates.
+     */
+    struct Coordinate{
+        int x;
+        int y;
+    };
+
 private:
 
     /**
@@ -37,7 +45,7 @@ private:
     /**
      * @brief Indices of pixels from which this pixel can be seen.
      */
-    std::vector<int> seenFrom;
+    std::vector<Coordinate> seenFrom;
 };
 
 
