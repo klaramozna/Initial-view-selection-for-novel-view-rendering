@@ -2,6 +2,7 @@
 #define IMAGE_H
 
 #include <vector>
+#include <string>
 #include "Pixel.h"
 
 /**
@@ -9,11 +10,18 @@
  */
 class Image {
 public:
+
     /**
-     * @brief Creates an image with the given pixels.Each "inner" vector is interpreted as a row. It is assumed that all rows are of the same length.
-     * @param pixels Pixels to be stored.
+     * @brief Indicates whether reading the file was successful (correct format, file could be opened, path valid etc).
      */
-    Image(const std::vector<std::vector<Pixel>>& pixels);
+    enum Status {SUCCESS, FAILURE};
+
+    /**
+     * @brief Reads the file in the given path. The file has to be in the ssv format. Additionally, each row has to be of the same length. Possible values are: 0 - empty space, 1 - a pixel inside of the volume, 3 - a pixel on the surface of the volume.
+     * @param filePath Path to the file that is supposed to be read.
+     * @return Either SUCCESS if the file was read successfully. FAILURE if not.
+     */
+    Status readFromFile(const std::string& filePath);
 
 private:
 
