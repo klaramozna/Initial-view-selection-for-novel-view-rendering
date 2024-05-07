@@ -23,6 +23,54 @@ public:
      */
     Status readFromFile(const std::string& filePath);
 
+    /**
+     * @brief Returns the width of the image in pixels.
+     * @return Width of the image in pixels.
+     */
+    int getWidth() const{return width;};
+
+    /**
+    * @brief Returns the height of the image in pixels.
+    * @return Height of the image in pixels.
+    */
+    int getHeight() const{return height;};
+
+    /**
+     * @brief Returns the type of the pixel at the given location.
+     * @param x X coordinate of the pixel.
+     * @param y Y coordinate of the pixel.
+     * @return Type of the pixel.
+     */
+    Pixel::PixelType getPixelType(int x, int y) const;
+
+    /**
+     * @brief Returns the type of the pixel at the given location.
+     * @param coordinate Coordinate of the pixel.
+     * @return Type of the pixel.
+     */
+    Pixel::PixelType getPixelType(Pixel::Coordinate coordinate) const;
+
+    /**
+     * @brief Sets the visible pixels of the pixel at the given coordinates.
+     * @param coordinate The coordinate of the pixel.
+     * @param visiblePixels Pixels from which the pixel can be seen.
+     */
+    void addVisiblePixels(Pixel::Coordinate coordinate, const std::vector<Pixel::Coordinate>& visiblePixels);
+
+    /**
+     * @brief Sets the visible pixels of the pixel at the given coordinates.
+     * @param x X coordinate.
+     * @param y Y coordinate.
+     * @param visiblePixels Pixels from which the pixel can be seen.
+     */
+    void addVisiblePixels(int x, int y, const std::vector<Pixel::Coordinate>& visiblePixels);
+
+    /**
+     * @brief Return the coordinates of all surface pixels.
+     * @return Coordinates of all surface pixels.
+     */
+    std::vector<Pixel::Coordinate> getSurfacePixels();
+
 private:
 
     /**
@@ -40,7 +88,13 @@ private:
      */
     int width;
 
-
+    /**
+     * @brief Transforms the coordinates into an index of the stored pixels vector.
+     * @param x X coordinate.
+     * @param y Y coordinate.
+     * @return Corresponding index in the pixels vector.
+     */
+    int getIndex(int x, int y) const {return y * width + x;};
 
 };
 

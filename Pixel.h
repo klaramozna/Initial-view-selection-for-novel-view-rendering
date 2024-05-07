@@ -2,6 +2,8 @@
 #define PIXEL_H
 
 
+#include <utility>
+#include <set>
 #include <vector>
 
 /**
@@ -25,7 +27,7 @@ public:
      * @brief Returns the type of the pixel.
      * @return Type of the pixel.
      */
-    PixelType getType(){return type;}
+    PixelType getType() const {return type;};
 
     /**
      * @brief Represents 2d coordinates.
@@ -34,6 +36,8 @@ public:
         int x;
         int y;
 
+        Coordinate(int x, int y): x{x}, y{y}{};
+
         bool operator==(const Coordinate& other) const {
             return x == other.x && y == other.y;
         }
@@ -41,7 +45,18 @@ public:
         bool operator!=(const Coordinate& other) const {
             return x != other.x || y != other.y;
         }
+
+        bool operator<(const Coordinate& other) const {
+            if (x == other.x) return y < other.y;
+            return x < other.x;
+        }
     };
+
+    /**
+     * @brief Sets the coordinates of pixels from which the pixel can be seen to the given vector.
+     * @param seenFrom Coordinates of pixels, from which this pixel can be seen.
+     */
+    void addVisiblePixels(const std::vector<Coordinate>& visiblePixels);
 
 private:
 
@@ -53,7 +68,7 @@ private:
     /**
      * @brief Indices of pixels from which this pixel can be seen.
      */
-    std::vector<Coordinate> seenFrom;
+    std::set<Coordinate> seenFrom;
 };
 
 

@@ -5,6 +5,7 @@
 #include "Image.h"
 #include <fstream>
 #include <sstream>
+#include <stdexcept>
 
 Image::Status Image::readFromFile(const std::string &filePath) {
     // Open the file and check if it was successful
@@ -63,4 +64,64 @@ Image::Status Image::readFromFile(const std::string &filePath) {
 
     file.close();
     return SUCCESS;
+}
+
+Pixel::PixelType Image::getPixelType(int x, int y) const {
+    // Get index in the pixels vector
+    int index = getIndex(x, y);
+
+    // Check that the pixel coordinates are valid.
+    if(index < 0 || index >= pixels.size()){
+        throw std::runtime_error("x or y coordinate out of image.");
+    }
+
+    return pixels[index].getType();
+}
+
+Pixel::PixelType Image::getPixelType(Pixel::Coordinate coordinate) const {
+    // Get index in the pixels vector
+    int index = getIndex(coordinate.x, coordinate.y);
+
+    // Check that the pixel coordinates are valid.
+    if(index < 0 || index >= pixels.size()){
+        throw std::runtime_error("x or y coordinate out of image.");
+    }
+
+    return pixels[index].getType();
+}
+
+void Image::addVisiblePixels(Pixel::Coordinate coordinate, const std::vector<Pixel::Coordinate>& visiblePixels) {
+    // Get index in the pixels vector
+    int index = getIndex(coordinate.x, coordinate.y);
+
+    // Check that the pixel coordinates are valid.
+    if(index < 0 || index >= pixels.size()){
+        throw std::runtime_error("x or y coordinate out of image.");
+    }
+
+    pixels[index].addVisiblePixels(visiblePixels);
+}
+
+void Image::addVisiblePixels(int x, int y, const std::vector<Pixel::Coordinate>& visiblePixels) {
+    // Get index in the pixels vector
+    int index = getIndex(x, y);
+
+    // Check that the pixel coordinates are valid.
+    if(index < 0 || index >= pixels.size()){
+        throw std::runtime_error("x or y coordinate out of image.");
+    }
+
+    pixels[index].addVisiblePixels(visiblePixels);
+}
+
+std::vector<Pixel::Coordinate> Image::getSurfacePixels() {
+    std::vector<Pixel::Coordinate> surfacePixels{};
+    for(int x = 0; x < width; x++){
+        for(int y = 0; y < height; y++){
+            if(pixels[getIndex(x, y)].getType() == Pixel::SURFACE){
+                surfacePixels.emplace_back(x, y);
+            }
+        }
+    }
+    return surfacePixels;
 }

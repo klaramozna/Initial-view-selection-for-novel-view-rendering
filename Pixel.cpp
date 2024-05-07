@@ -1,5 +1,7 @@
-//
-// Created by klara on 02.05.24.
-//
-
 #include "Pixel.h"
+
+void Pixel::addVisiblePixels(const std::vector<Coordinate>& visiblePixels) {
+    for(auto pixel : visiblePixels){
+        seenFrom.insert(pixel);
+    }
+}
