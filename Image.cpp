@@ -125,3 +125,15 @@ std::vector<Pixel::Coordinate> Image::getSurfacePixels() {
     }
     return surfacePixels;
 }
+
+std::set<Pixel::Coordinate> Image::getVisiblePixels(int x, int y) {
+    // Get index in the pixels vector
+    int index = getIndex(x, y);
+
+    // Check that the pixel coordinates are valid.
+    if(index < 0 || index >= pixels.size()){
+        throw std::runtime_error("x or y coordinate out of image.");
+    }
+
+    return pixels[index].getVisiblePixels();
+}

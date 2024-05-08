@@ -58,6 +58,12 @@ public:
      */
     void addVisiblePixels(const std::vector<Coordinate>& visiblePixels);
 
+    /**
+     * @brief Returns the pixels that this pixel can be seen from.
+     * @return Coordinates of pixels that this pixel can be seen from.
+     */
+    std::set<Coordinate> getVisiblePixels() const {return seenFrom;};
+
 private:
 
     /**

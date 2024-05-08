@@ -11,6 +11,8 @@
 class Image {
 public:
 
+    Image() = default;
+
     /**
      * @brief Indicates whether reading the file was successful (correct format, file could be opened, path valid etc).
      */
@@ -51,6 +53,14 @@ public:
     Pixel::PixelType getPixelType(Pixel::Coordinate coordinate) const;
 
     /**
+     * @brief Returns the pixels from which the pixel at (x,y) is visible.
+     * @param x X coordinate of the pixel.
+     * @param y Y coordinate of the pixel.
+     * @return Pixels from which the pixel can be seen.
+     */
+    std::set<Pixel::Coordinate> getVisiblePixels(int x, int y);
+
+    /**
      * @brief Sets the visible pixels of the pixel at the given coordinates.
      * @param coordinate The coordinate of the pixel.
      * @param visiblePixels Pixels from which the pixel can be seen.
@@ -81,12 +91,12 @@ private:
     /**
      * @brief Height of the image in pixels.
      */
-    int height;
+    int height{};
 
     /**
      * @brief Width of the image in pixels.
      */
-    int width;
+    int width{};
 
     /**
      * @brief Transforms the coordinates into an index of the stored pixels vector.

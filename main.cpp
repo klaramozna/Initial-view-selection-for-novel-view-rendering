@@ -3,7 +3,7 @@
 
 int main(){
     Image image{};
-    if(image.readFromFile("/home/klara/CLionProjects/Initial-view-selection-for-novel-view-rendering/input/input_test.ssv") == Image::FAILURE){
+    if(image.readFromFile("/home/klara/CLionProjects/Initial-view-selection-for-novel-view-rendering/input/test_input0.ssv") == Image::FAILURE){
         std::cout << "wronh" << std::endl;
     };
 

@@ -4,7 +4,7 @@
 #include "RayCaster.h"
 
 /**
- * @brief Uses a fixed step size to find pixels on the ray.
+ * @brief Uses a fixed step size to find pixels on the ray. Not fully accurate, only an approximation - the smaller the step size, the better the accuracy.
  */
 class SimpleRayCast : public RayCaster {
 private:

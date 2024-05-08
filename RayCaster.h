@@ -11,6 +11,8 @@
 class RayCaster {
 public:
 
+    RayCaster() = default;
+
     /**
      * @brief Creates a RayCaster object with the given image.
      * @param image The image for which the visibility cones will be computed.
@@ -21,6 +23,12 @@ public:
      * @brief For each pixel, all pixels that "see" it are stored.
      */
     void computeVisibility();
+
+    /**
+     * @brief Sets the image to the given image
+     * @param imageInput The image to be set.
+     */
+    void setImage(std::shared_ptr<Image> imageInput);
 
 private:
 
@@ -48,6 +56,13 @@ private:
      * @return Center point of the pixel.
      */
     static std::pair<double, double> getMiddle(int x, int y);
+
+    /**
+     * @brief Store the coordinates of the edges of the image.
+     * @param width Width of the image in pixels.
+     * @param height Height of the image in pixels.
+     */
+    void initializeEdges(int width, int height);
 
 protected:
 

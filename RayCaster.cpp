@@ -1,4 +1,5 @@
 #include <cmath>
+#include <utility>
 #include "RayCaster.h"
 
 Pixel::Coordinate RayCaster::getGridCoordinate(double x, double y) {
@@ -35,28 +36,7 @@ void RayCaster::computeVisibilityForPixel(int x, int y) {
 }
 
 RayCaster::RayCaster(std::shared_ptr<Image> image): image{std::move(image)} {
-    // Reserve space for edges
-    edges.reserve(image->getHeight() * 2 + (image->getWidth() - 2) * 2);
-
-    // Left edge
-    for(int y = 0; y < image->getHeight(); y++){
-        edges.emplace_back(getMiddle(0, y).first, getMiddle(0, y).second);
-    }
-
-    // Right edge
-    for(int y = 0; y < image->getHeight(); y++){
-        edges.emplace_back(getMiddle(image->getWidth() - 1, y).first, getMiddle(image->getWidth() - 1, y).second);
-    }
-
-    // Upper edge
-    for(int x = 1; x < image->getWidth() - 1; x++){
-        edges.emplace_back(getMiddle(x, image->getHeight() - 1).first, getMiddle(x, image->getHeight() - 1).second);
-    }
-
-    // Lower edge
-    for(int x = 1; x < image->getWidth() - 1; x++){
-        edges.emplace_back(getMiddle(x, 0).first, getMiddle(x, 0).second);
-    }
+    initializeEdges(image->getWidth(), image->getHeight());
 }
 
 std::pair<double, double> RayCaster::getMiddle(int x, int y) {
@@ -68,4 +48,34 @@ void RayCaster::computeVisibility() {
     for(auto surfacePixel : surface){
         computeVisibilityForPixel(surfacePixel.x, surfacePixel.y);
     }
+}
+
+void RayCaster::initializeEdges(int width, int height) {
+    // Reserve space for edges
+    edges.reserve(height * 2 + (width - 2) * 2);
+
+    // Left edge
+    for(int y = 0; y < height; y++){
+        edges.emplace_back(getMiddle(0, y).first, getMiddle(0, y).second);
+    }
+
+    // Right edge
+    for(int y = 0; y < height; y++){
+        edges.emplace_back(getMiddle(width - 1, y).first, getMiddle(width - 1, y).second);
+    }
+
+    // Upper edge
+    for(int x = 1; x < width - 1; x++){
+        edges.emplace_back(getMiddle(x, height - 1).first, getMiddle(x, height - 1).second);
+    }
+
+    // Lower edge
+    for(int x = 1; x < width - 1; x++){
+        edges.emplace_back(getMiddle(x, 0).first, getMiddle(x, 0).second);
+    }
+}
+
+void RayCaster::setImage(std::shared_ptr<Image> imageInput) {
+    image = std::move(imageInput);
+    initializeEdges(image->getWidth(), image->getHeight());
 }
