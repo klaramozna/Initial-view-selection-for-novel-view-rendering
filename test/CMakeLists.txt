@@ -12,8 +12,6 @@ add_executable(
         ../Image.cpp
         ../RayCaster.h
         ../RayCaster.cpp
-        ../SimpleRayCast.h
-        ../SimpleRayCast.cpp
         SimpleRayCastTest.cpp
         SimpleRayCastTest.h
 )

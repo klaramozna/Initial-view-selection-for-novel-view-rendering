@@ -74,7 +74,7 @@ protected:
      * @param yEnd Y coordinate of the ending point of the line.
      * @return Vector of the coordinates of pixels that the line crosses.
      */
-    virtual std::vector<Pixel::Coordinate> castRay(double xStart, double yStart, double xEnd, double yEnd) = 0;
+    static std::vector<Pixel::Coordinate> castRay(double xStart, double yStart, double xEnd, double yEnd);
 
     /**
      * @brief Returns the (integer) coordinates of the pixel in which the given coordinates lie.

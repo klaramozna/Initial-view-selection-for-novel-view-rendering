@@ -79,3 +79,67 @@ void RayCaster::setImage(std::shared_ptr<Image> imageInput) {
     image = std::move(imageInput);
     initializeEdges(image->getWidth(), image->getHeight());
 }
+
+std::vector<Pixel::Coordinate> RayCaster::castRay(double xStart, double yStart, double xEnd, double yEnd) {
+    // DDA
+    // Calculate the normalized direction vector of the ray
+    double rayDirX = xEnd - xStart;
+    double rayDirY = yEnd - yStart;
+    double d = sqrt(pow(rayDirX, 2) + pow(rayDirY, 2));
+    rayDirX = rayDirX / d;
+    rayDirY = rayDirY / d;
+
+    // Calculate the unit step size vector (How much along the ray do I need to go to march length one along the x or y-axis).
+    double unitStepSizeX = sqrt(1 + pow(rayDirY / rayDirX, 2));
+    double unitStepSizeY = sqrt(1 + pow(rayDirX / rayDirY, 2));
+
+    // Get starting pixel
+    Pixel::Coordinate currentGridCoordinate = getGridCoordinate(xStart, yStart);
+
+    // Length of the ray that goes towards the next intersection in the x or y direction
+    double currentRayLengthX;
+    double currentRayLengthY;
+
+    // General direction of the ray (up / down / left / right)
+    int stepX = rayDirX < 0 ? -1 : 1;
+    int stepY = rayDirY < 0 ? -1 : 1;
+
+    // Find the intersection from the starting point to the edge of the current cell
+    // Ray goes from right to left
+    if(stepX < 0){
+        currentRayLengthX = (xStart - currentGridCoordinate.x ) * unitStepSizeX;
+    }
+        // Ray goes from left to right
+    else{
+        currentRayLengthX = (currentGridCoordinate.x + 1 - xStart) * unitStepSizeX;
+    }
+    // Ray goes upwards
+    if(stepY < 0){
+        currentRayLengthY = (yStart - currentGridCoordinate.y) * unitStepSizeY;
+    }
+        // Ray goes downwards
+    else{
+        currentRayLengthY = (currentGridCoordinate.y + 1 - yStart) * unitStepSizeY;
+    }
+
+    bool obstacleHit = false;
+    std::vector<Pixel::Coordinate> intersectedPixels{};
+    while(currentGridCoordinate != getGridCoordinate(xEnd, yEnd)){
+        // Add the current pixel
+        intersectedPixels.push_back(currentGridCoordinate);
+
+        // Determine if we should walk in the x or y direction and update the current pixel
+        if(currentRayLengthX < currentRayLengthY){
+            currentGridCoordinate.x += stepX;
+            currentRayLengthX += unitStepSizeX;
+        }
+        else{
+            currentGridCoordinate.y += stepY;
+            currentRayLengthY += unitStepSizeY;
+        }
+    }
+
+    intersectedPixels.push_back(getGridCoordinate(xEnd, yEnd));
+
+    return intersectedPixels;
+}
