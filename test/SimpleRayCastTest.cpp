@@ -4,11 +4,12 @@
 
 void SimpleRayCastTest::SetUp() {
     testImage0->readFromFile("/home/klara/CLionProjects/Initial-view-selection-for-novel-view-rendering/input/test_input0.ssv");
-    rayCast.setImage(testImage0);
+    testImage1->readFromFile("/home/klara/CLionProjects/Initial-view-selection-for-novel-view-rendering/input/test_input1.ssv");
 }
 
 // Simple case with only one surface pixel in the middle
 TEST_F(SimpleRayCastTest, noObstacles){
+    rayCast.setImage(testImage0);
     rayCast.computeVisibility();
 
     // Create the set for the correct answer (all pixels except for the single surface pixel)
@@ -35,7 +36,12 @@ TEST_F(SimpleRayCastTest, noObstacles){
     ASSERT_EQ(correctAnswer, testImage0->getVisiblePixels(5, 3));
 }
 
-TEST_F(SimpleRayCastTest, simpleObstacles){
+// Simple obstacle - straight line parallel to the grid
+TEST_F(SimpleRayCastTest, simpleObstacle){
+    rayCast.setImage(testImage1);
+    rayCast.computeVisibility();
+    DebugVisualize visualize(*testImage1);
+    visualize.visualizePixelVisibility(9, 8);
 
 }
 

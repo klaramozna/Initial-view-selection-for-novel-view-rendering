@@ -34,21 +34,35 @@ void DebugVisualize::visualizePixelVisibility(int x, int y) {
         }
     }
 
+    Color color;
     for(int yCoord = 0; yCoord < image.getHeight(); yCoord++){
         for(int xCoord = 0; xCoord < image.getWidth(); xCoord++){
             char pixel;
             switch(pixels[yCoord * image.getWidth() + xCoord]){
-                case ERROR: pixel = 'X'; break;
-                case OBJECT: pixel = 'O'; break;
-                case PIXEL: pixel = 'P'; break;
-                case VISIBLE: pixel = 'V'; break;
-                case EMPTY: pixel = 'E';
+                case ERROR: pixel = 'X'; color = RED;break;
+                case OBJECT: pixel = 'O';color = YELLOW;break;
+                case PIXEL: pixel = 'P'; color = RED;break;
+                case VISIBLE: pixel = 'V'; color = GREEN; break;
+                case EMPTY: pixel = 'E'; color = BLUE;
             }
-            std::cout << pixel << ' ' << ' ';
+            setOutputColor(color);
+            std::cout << "▄" << ' ' << ' ';
         }
         std::cout << std::endl;
     }
 
+    setOutputColor(RESET);
 
+}
 
+void DebugVisualize::setOutputColor(DebugVisualize::Color color) {
+    int colorCode;
+    switch(color){
+        case RED: colorCode = 31; break;
+        case YELLOW: colorCode = 33; break;
+        case BLUE: colorCode = 34; break;
+        case GREEN: colorCode = 32; break;
+        default:colorCode = 0;
+    }
+    std::cout << "\033[" << colorCode << "m";
 }
