@@ -4,6 +4,7 @@
 #include <memory>
 #include <utility>
 #include "Image.h"
+#include "Camera.h"
 
 /**
  * @brief Responsible for computing the the visible area for each pixel.
@@ -29,6 +30,12 @@ public:
      * @param imageInput The image to be set.
      */
     void setImage(std::shared_ptr<Image> imageInput);
+
+    /**
+     * @brief Computes the surface pixels that the camera sees.
+     * @param camera The camera that the results get stored to.
+     */
+    static void setCameraView(Camera camera);
 
 private:
 

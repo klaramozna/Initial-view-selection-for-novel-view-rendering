@@ -22,6 +22,10 @@ add_executable(Initial_view_selection_for_novel_view_rendering
         RayCaster.h
         DebugVisualize.cpp
         DebugVisualize.h
+        Camera.cpp
+        Camera.h
+        CameraGenerator.cpp
+        CameraGenerator.h
 )
 
 add_subdirectory(test)
