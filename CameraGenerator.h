@@ -4,6 +4,7 @@
 
 #include "Image.h"
 #include "Camera.h"
+#include "RayCaster.h"
 
 class CameraGenerator {
 public:
@@ -13,7 +14,7 @@ public:
      * @param angle View angle of the cameras.
      * @param im The image in which visibility is computed.
      */
-    CameraGenerator(int directions, double angle, Image im): numDirections{directions}, cameraViewAngle{angle}, image{im}{this->directions = getDirections();};
+    CameraGenerator(int directions, double angle, const Image& im, RayCaster rayCaster): numDirections{directions}, cameraViewAngle{angle}, rayCaster{rayCaster}, image{im}{this->directions = getDirections();};
 
     /**
      * @brief Generates all possible cameras.
@@ -34,7 +35,7 @@ private:
     double cameraViewAngle;
 
     /**
-     * @brief The image in which visibility is computed.
+     * @brief Image that the cameras are generated for.
      */
     Image image;
 
@@ -48,6 +49,11 @@ private:
      * @brief Normalized vectors of the possible directions of cameras.
      */
     std::vector<std::pair<double, double>> directions;
+
+    /**
+     * @brief Contains algorithms used to compute visibility.
+     */
+    RayCaster rayCaster;
 };
 
 

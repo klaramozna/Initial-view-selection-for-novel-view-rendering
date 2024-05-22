@@ -27,6 +27,7 @@ std::vector<Camera> CameraGenerator::generateCameras() {
             if(image.getPixelType(x, y) == Pixel::EMPTY_SPACE){
                 for(auto direction : directions){
                     Camera cam{Pixel::Coordinate{x, y}, direction, cameraViewAngle};
+                    rayCaster.setCameraView(cam);
                     result.push_back(cam);
                 }
             }

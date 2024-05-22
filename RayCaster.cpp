@@ -143,3 +143,54 @@ std::vector<Pixel::Coordinate> RayCaster::castRay(double xStart, double yStart, 
 
     return intersectedPixels;
 }
+
+void RayCaster::setCameraView(Camera& camera) {
+    // Compute the center of the pixel that the rays are going to be cast from
+    std::pair<double, double> center = getMiddle(camera.getPosition().x, camera.getPosition().y);
+
+    // Cast a ray from the pixel to each edge pixel and add the corresponding pixels to the visibility field of the pixels.
+    for(auto edgePixel : edges){
+        // Check if the pixel cast from the camera to the edge lies within what the camera can see.
+        if(isInView(camera, edgePixel.first, edgePixel.second)){
+            // Cast ray
+            std::vector<Pixel::Coordinate> rayPixels = castRay(center.first, center.second,  edgePixel.first, edgePixel.second);
+
+            // Go through ray and add visible pixels until an obstacle is hit.
+            std::vector<Pixel::Coordinate> visiblePixels{};
+            for(int j = 1; j < rayPixels.size(); j++){
+                // Get current pixel
+                Pixel::Coordinate rayPixel = rayPixels[j];
+
+                // Check if a pixel should be added, ending loop if an object has been hit
+                if(image->getPixelType(rayPixel) == Pixel::INTERIOR){
+                    break; // should not happen, given that the input is formatted correctly
+                }
+                if(image->getPixelType(rayPixel) == Pixel::SURFACE){
+                    visiblePixels.push_back(rayPixel);
+                    break;
+                }
+            }
+            camera.addVisibleSurfacePixels(visiblePixels);
+        }
+    }
+}
+
+bool RayCaster::isInView(Camera camera, int x, int y) {
+    // Create vector from the camera to the edge pixel (x,y)
+    std::pair<double, double> edgeVector{x - camera.getPosition().x, y - camera.getPosition().y};
+
+    // Calculate angle to x-axis and normalize it to be in [0, 360]
+    double angle = atan2(edgeVector.second, edgeVector.first) * 180/M_PI;
+    angle = normalizeAngle(angle);
+
+    // Calculate angle of the camera to x-axis
+    double cameraAngle = atan2(camera.getDirection().second, camera.getDirection().first);
+    cameraAngle = normalizeAngle(cameraAngle);
+
+    // Calculate relative angle
+    double relativeAngle = angle - cameraAngle;
+    relativeAngle = abs(normalizeAngle(relativeAngle));
+
+    // Get final result
+    return relativeAngle <= camera.getOpeningAngle() / 2;
+}

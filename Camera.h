@@ -2,6 +2,7 @@
 #define CAMERA_H
 
 #include "Pixel.h"
+#include <set>
 
 class Camera {
 public:
@@ -36,7 +37,13 @@ public:
      * @brief Returns the pixels that the camera sees.
      * @return The pixels that the camera sees.
      */
-    const std::vector<Pixel::Coordinate> &getVisibleSurfacePixels() const {return visibleSurfacePixels;}
+    const std::set<Pixel::Coordinate> &getVisibleSurfacePixels() const {return visibleSurfacePixels;}
+
+    /**
+     * @brief Adds the given pixels to the field of view of the camera if they are not there yet.
+     * @param visiblePixels Surface pixels that the camera sees.
+     */
+    void addVisibleSurfacePixels(std::vector<Pixel::Coordinate> visiblePixels);
 
 private:
     /**
@@ -57,7 +64,7 @@ private:
     /**
      * @brief The surface pixels that the camera sees.
      */
-    std::vector<Pixel::Coordinate> visibleSurfacePixels;
+    std::set<Pixel::Coordinate> visibleSurfacePixels;
 };
 
 

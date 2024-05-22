@@ -35,7 +35,7 @@ public:
      * @brief Computes the surface pixels that the camera sees.
      * @param camera The camera that the results get stored to.
      */
-    static void setCameraView(Camera camera);
+    void setCameraView(Camera& camera);
 
 private:
 
@@ -70,6 +70,40 @@ private:
      * @param height Height of the image in pixels.
      */
     void initializeEdges(int width, int height);
+
+    /**
+     * @brief Returns true if the ray cast from the camera to the given pixel coordinates lies within the cameras view.
+     * @param camera The camera.
+     * @param x X coordinate of the pixel.
+     * @param y Y coordinate of the pixel.
+     * @return True if the ray cast from the camera to the given pixel coordinates lies within the cameras view.
+     */
+    static bool isInView(Camera camera, int x, int y);
+
+    //TODO: manage this
+    std::pair<double, double> normalize(double x, double y) {
+        double magnitude = sqrt(x * x + y * y);
+        x /= magnitude;
+        y /= magnitude;
+    }
+
+    double dotProduct(double x1, double y1, double x2, double y2) {
+        return x1 * x2 + y1 * y2;
+    }
+
+    double crossProduct(double x1, double y1, double x2, double y2) {
+        return x1 * y2 - y1 * x2;
+    }
+
+    static double normalizeAngle(double angle){
+        while (angle < 0.0) {
+            angle += 360.0;
+        }
+        while (angle >= 360.0) {
+            angle -= 360.0;
+        }
+        return angle;
+    }
 
 protected:
 

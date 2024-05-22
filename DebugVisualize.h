@@ -4,14 +4,17 @@
 #include <utility>
 
 #include "Image.h"
+#include "Camera.h"
 
 class DebugVisualize {
 public:
-    explicit DebugVisualize(Image imageInput): image{std::move(imageInput)}{};
-    void visualizePixelVisibility(int x, int y);
+    explicit DebugVisualize(Image imageInput, std::vector<Camera> cameras): image{std::move(imageInput)}, cams{cameras}{};
+    void visualizeCamera(Camera cam);
+    void visualizeCameras(std::vector<Camera> cams);
 
 private:
     Image image;
+    std::vector<Camera> cams;
     enum Color{RED, YELLOW, BLUE, GREEN, RESET};
     void setOutputColor(Color color);
 };
