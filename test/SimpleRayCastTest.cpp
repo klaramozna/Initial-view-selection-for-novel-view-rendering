@@ -5,6 +5,7 @@
 void SimpleRayCastTest::SetUp() {
     testImage0->readFromFile("/home/klara/CLionProjects/Initial-view-selection-for-novel-view-rendering/input/test_input0.ssv");
     testImage1->readFromFile("/home/klara/CLionProjects/Initial-view-selection-for-novel-view-rendering/input/test_input1.ssv");
+    testImage2->readFromFile("/home/klara/CLionProjects/Initial-view-selection-for-novel-view-rendering/input/test_input2.ssv");
 }
 
 // Simple case with only one surface pixel in the middle and 360 degree view
@@ -37,10 +38,11 @@ TEST_F(SimpleRayCastTest, noObstacles){
 
 // Simple obstacle - straight line parallel to the grid
 TEST_F(SimpleRayCastTest, simpleObstacle){
-    /*rayCast.setImage(testImage1);
-    rayCast.computeVisibility();
-    DebugVisualize visualize(*testImage1);
-    visualize.visualizePixelVisibility(9, 8);*/
+    Camera cam{Pixel::Coordinate{9, 8}, std::pair<double, double>{1, 1}, 360};
+    rayCast.setImage(testImage2);
+    rayCast.setCameraView(cam);
+    DebugVisualize visualize(*testImage2);
+    visualize.visualizeCamera(cam);
 
 }
 

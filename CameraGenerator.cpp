@@ -33,4 +33,5 @@ std::vector<Camera> CameraGenerator::generateCameras() {
             }
         }
     }
+    return result;
 }

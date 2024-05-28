@@ -19,7 +19,7 @@ public:
      * @brief Creates a RayCaster object with the given image.
      * @param image The image for which the visibility cones will be computed.
      */
-    explicit RayCaster(std::shared_ptr<Image> image);
+    explicit RayCaster(const std::shared_ptr<Image>& image);
 
     /**
      * @brief For each pixel, all pixels that "see" it are stored.

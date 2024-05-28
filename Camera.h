@@ -45,6 +45,8 @@ public:
      */
     void addVisibleSurfacePixels(std::vector<Pixel::Coordinate> visiblePixels);
 
+    bool operator==(const Camera& other) const;
+
 private:
     /**
      * @brief The pixel in which the camera is located.

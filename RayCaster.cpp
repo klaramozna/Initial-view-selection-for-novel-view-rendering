@@ -35,7 +35,7 @@ void RayCaster::computeVisibilityForPixel(int x, int y) {
 
 }
 
-RayCaster::RayCaster(std::shared_ptr<Image> image): image{std::move(image)} {
+RayCaster::RayCaster(const std::shared_ptr<Image>& image): image{image} {
     initializeEdges(image->getWidth(), image->getHeight());
 }
 

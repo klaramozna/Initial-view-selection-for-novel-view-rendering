@@ -14,8 +14,12 @@ add_executable(
         ../RayCaster.cpp
         ../Camera.h
         ../Camera.cpp
+        ../CameraGenerator.h
+        ../CameraGenerator.cpp
         SimpleRayCastTest.cpp
         SimpleRayCastTest.h
+        CameraGeneratorTest.cpp
+        CameraGeneratorTest.h
 )
 
 target_link_libraries(
