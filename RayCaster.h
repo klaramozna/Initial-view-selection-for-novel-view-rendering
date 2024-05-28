@@ -5,6 +5,7 @@
 #include <utility>
 #include "Image.h"
 #include "Camera.h"
+#include <cmath>
 
 /**
  * @brief Responsible for computing the the visible area for each pixel.
@@ -81,13 +82,14 @@ private:
     static bool isInView(Camera camera, int x, int y);
 
     //TODO: manage this
-    std::pair<double, double> normalize(double x, double y) {
+    static std::pair<double, double> normalize(double x, double y) {
         double magnitude = sqrt(x * x + y * y);
         x /= magnitude;
         y /= magnitude;
+        return std::pair<double, double>{x, y};
     }
 
-    double dotProduct(double x1, double y1, double x2, double y2) {
+    static double dotProduct(double x1, double y1, double x2, double y2) {
         return x1 * x2 + y1 * y2;
     }
 
@@ -103,6 +105,10 @@ private:
             angle -= 360.0;
         }
         return angle;
+    }
+
+    static double magnitude(double x, double y) {
+        return sqrt(x * x + y * y);
     }
 
 protected:

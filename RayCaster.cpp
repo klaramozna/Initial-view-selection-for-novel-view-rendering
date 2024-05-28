@@ -177,20 +177,17 @@ void RayCaster::setCameraView(Camera& camera) {
 
 bool RayCaster::isInView(Camera camera, int x, int y) {
     // Create vector from the camera to the edge pixel (x,y)
-    std::pair<double, double> edgeVector{x - camera.getPosition().x, y - camera.getPosition().y};
+    std::pair<double, double> cameraMiddle = getMiddle(camera.getPosition().x, camera.getPosition().y);
+    std::pair<double, double> edgePixelMiddle = getMiddle(x, y);
+    std::pair<double, double> edgeVector{edgePixelMiddle.first - cameraMiddle.first, edgePixelMiddle.second - cameraMiddle.second};
 
-    // Calculate angle to x-axis and normalize it to be in [0, 360]
-    double angle = atan2(edgeVector.second, edgeVector.first) * 180/M_PI;
-    angle = normalizeAngle(angle);
+    // Calculate cos of the angle between the camera direction vector and the vector from the camera to (x,y)
+    double cosAngle = dotProduct(edgeVector.first, edgeVector.second, camera.getDirection().first, camera.getDirection().second) /
+            (magnitude(edgeVector.first, edgeVector.second) * magnitude(camera.getDirection().first, camera.getDirection().second));
 
-    // Calculate angle of the camera to x-axis
-    double cameraAngle = atan2(camera.getDirection().second, camera.getDirection().first);
-    cameraAngle = normalizeAngle(cameraAngle);
+    // Get the actual angle in degrees
+    double angle = acos(cosAngle) * (180 / M_PI);
 
-    // Calculate relative angle
-    double relativeAngle = angle - cameraAngle;
-    relativeAngle = abs(normalizeAngle(relativeAngle));
-
-    // Get final result
-    return relativeAngle <= camera.getOpeningAngle() / 2;
+    // Check that the vector is within the visible angle of the camera
+    return fabs(angle) <= camera.getOpeningAngle() / 2;
 }

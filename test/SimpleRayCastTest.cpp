@@ -7,10 +7,11 @@ void SimpleRayCastTest::SetUp() {
     testImage1->readFromFile("/home/klara/CLionProjects/Initial-view-selection-for-novel-view-rendering/input/test_input1.ssv");
 }
 
-// Simple case with only one surface pixel in the middle
+// Simple case with only one surface pixel in the middle and 360 degree view
 TEST_F(SimpleRayCastTest, noObstacles){
+    Camera cam{Pixel::Coordinate{5, 3}, std::pair<double, double>{1, 1}, 360};
     rayCast.setImage(testImage0);
-    rayCast.computeVisibility();
+    rayCast.setCameraView(cam);
 
     // Create the set for the correct answer (all pixels except for the single surface pixel)
     std::set<Pixel::Coordinate> correctAnswer;
@@ -19,29 +20,27 @@ TEST_F(SimpleRayCastTest, noObstacles){
         for (int y = 0; y < testImage0->getHeight(); y++) {
             if(x != 5 || y != 3){
                 correctAnswer.emplace(x, y);
-                // Make sure visibility was not calculated for non-surface pixels
-                ASSERT_EQ(testImage0->getVisiblePixels(x, y), emptySet);
             }
         }
     }
 
     // Print differences if the answer is false
-    if(correctAnswer != testImage0->getVisiblePixels(5, 3)){
-        printSetDifference(correctAnswer, testImage0->getVisiblePixels(5, 3));
+    if(correctAnswer != cam.getVisibleSurfacePixels()){
+        printSetDifference(correctAnswer, cam.getVisibleSurfacePixels());
         DebugVisualize visualize(*testImage0);
-        visualize.visualizePixelVisibility(5, 3);
+        visualize.visualizeCamera(cam);
     }
 
     // Compare
-    ASSERT_EQ(correctAnswer, testImage0->getVisiblePixels(5, 3));
+    ASSERT_EQ(correctAnswer, cam.getVisibleSurfacePixels());
 }
 
 // Simple obstacle - straight line parallel to the grid
 TEST_F(SimpleRayCastTest, simpleObstacle){
-    rayCast.setImage(testImage1);
+    /*rayCast.setImage(testImage1);
     rayCast.computeVisibility();
     DebugVisualize visualize(*testImage1);
-    visualize.visualizePixelVisibility(9, 8);
+    visualize.visualizePixelVisibility(9, 8);*/
 
 }
 

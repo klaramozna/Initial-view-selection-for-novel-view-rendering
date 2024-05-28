@@ -8,7 +8,7 @@
 
 class DebugVisualize {
 public:
-    explicit DebugVisualize(Image imageInput, std::vector<Camera> cameras): image{std::move(imageInput)}, cams{cameras}{};
+    explicit DebugVisualize(Image imageInput): image{std::move(imageInput)}{};
     void visualizeCamera(Camera cam);
     void visualizeCameras(std::vector<Camera> cams);
 

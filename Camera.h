@@ -13,7 +13,7 @@ public:
      * @param angle Angle of view of the camera.
      * @param pixels The surface pixels that the camera sees.
      */
-    Camera(Pixel::Coordinate pos, std::pair<double, double> dir, double angle, std::vector<Pixel::Coordinate> pixels = {}): position{pos}, direction{dir}, openingAngle{angle}, visibleSurfacePixels{pixels}{};
+    Camera(Pixel::Coordinate pos, std::pair<double, double> dir, double angle): position{pos}, direction{dir}, openingAngle{angle}, visibleSurfacePixels{}{};
 
     /**
      * @brief Returns the pixel that the camera is in.
