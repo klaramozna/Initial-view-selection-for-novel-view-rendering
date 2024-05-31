@@ -11,7 +11,7 @@ public:
     /**
      * @brief Creates a camera generator with the given parameters.
      * @param directions Number of cameras generated per each possible position (each in a different direction).
-     * @param angle View angle of the cameras.
+     * @param angle View angle of the cameras. Angle times directions should be >= 360.
      * @param im The image in which visibility is computed.
      */
     CameraGenerator(int directions, double angle, const Image& im, RayCaster rayCaster): numDirections{directions}, cameraViewAngle{angle}, rayCaster{rayCaster}, image{im}{this->directions = getDirections();};

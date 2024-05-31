@@ -6,6 +6,9 @@
 
 class Camera {
 public:
+
+    Camera() = default;
+
     /**
      * @brief Creates a camera with the given parameters.
      * @param pos The pixel in which the camera is located.
@@ -46,6 +49,8 @@ public:
     void addVisibleSurfacePixels(std::vector<Pixel::Coordinate> visiblePixels);
 
     bool operator==(const Camera& other) const;
+
+    bool operator<(const Camera& other) const;
 
 private:
     /**

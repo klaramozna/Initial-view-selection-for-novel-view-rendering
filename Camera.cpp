@@ -13,3 +13,7 @@ bool Camera::operator==(const Camera &other) const {
             fabs(direction.second - other.getDirection().second) < 1e-9 &&
            openingAngle == other.openingAngle;
 }
+
+bool Camera::operator<(const Camera &other) const {
+    return position < other.position;
+}

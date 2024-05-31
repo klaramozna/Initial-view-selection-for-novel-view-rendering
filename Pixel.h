@@ -36,6 +36,7 @@ public:
         int x;
         int y;
 
+        Coordinate() = default;
         Coordinate(int x, int y): x{x}, y{y}{};
 
         bool operator==(const Coordinate& other) const {
