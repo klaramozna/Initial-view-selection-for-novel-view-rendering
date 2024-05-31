@@ -20,7 +20,7 @@ public:
      * @brief Generates all possible cameras.
      * @return The generated cameras.
      */
-    std::vector<Camera> generateCameras();
+    std::vector<Camera> generateCameras(int numDirs);
 
 private:
 

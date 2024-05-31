@@ -20,14 +20,14 @@ std::vector<std::pair<double, double>> CameraGenerator::getDirections() const {
     return dirs;
 }
 
-std::vector<Camera> CameraGenerator::generateCameras() {
+std::vector<Camera> CameraGenerator::generateCameras(int numDirs) {
     std::vector<Camera> result{};
     for(int x = 0; x < image.getWidth(); x++){
         for(int y = 0; y < image.getHeight(); y++){
             if(image.getPixelType(x, y) == Pixel::EMPTY_SPACE){
                 for(auto direction : directions){
                     Camera cam{Pixel::Coordinate{x, y}, direction, cameraViewAngle};
-                    rayCaster.setCameraView(cam);
+                    rayCaster.setCameraView(cam, numDirs);
                     result.push_back(cam);
                 }
             }

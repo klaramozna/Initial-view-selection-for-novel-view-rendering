@@ -35,8 +35,9 @@ public:
     /**
      * @brief Computes the surface pixels that the camera sees.
      * @param camera The camera that the results get stored to.
+     * @param numRays Number of rays that are cast evenly across the cameras view.
      */
-    void setCameraView(Camera& camera);
+    void setCameraView(Camera& camera, int numRays);
 
 private:
 
@@ -81,6 +82,22 @@ private:
      */
     static bool isInView(Camera camera, int x, int y);
 
+    /**
+     * @brief Generates vectors of numDirs equally distributed ray directions within the field of view of the camera.
+     * @param cam The camera that the directions should be calculated for.
+     * @param numDirs Number of directions to be generated.
+     * @return Vector of direction vectors.
+     */
+    std::vector<std::pair<double, double>> generateDirections(Camera cam, int numDirs);
+
+    /**
+     * @brief Rotates vector by rotationAngle degrees to the right.
+     * @param vector Vector to be rotated.
+     * @param rotationAngle Angle to be rotated by. If it is negative, the vector is rotated to the left.
+     * @return The rotated vector.
+     */
+    static std::pair<double, double> rotateVector(std::pair<double, double> vector, double rotationAngle);
+
     //TODO: manage this
     static std::pair<double, double> normalize(double x, double y) {
         double magnitude = sqrt(x * x + y * y);
@@ -124,12 +141,24 @@ protected:
     static std::vector<Pixel::Coordinate> castRay(double xStart, double yStart, double xEnd, double yEnd);
 
     /**
+     * @brief Computes which pixels the line from (xStart, yStart) in the direction (xDir, yDir). It is assumed that the given coordinates are within the image.
+     * @param xStart X coordinate of the starting point of the line.
+     * @param yStart Y coordinate of the starting point of the line.
+     * @param xDir X coordinate of the direction vector.
+     * @param yDir Y coordinate of the direction vector.
+     * @return Vector of the coordinates of pixels that the line crosses.
+     */
+    std::vector<Pixel::Coordinate> castRayDir(double xStart, double yStart, double xDir, double yDir);
+
+    /**
      * @brief Returns the (integer) coordinates of the pixel in which the given coordinates lie.
      * @param x X coordinate to be converted.
      * @param y Y coordinate to be converted.
      * @return The integer coordinate of the corresponding pixel ((0,0) is in the lower-left corner of the image).
      */
     static Pixel::Coordinate getGridCoordinate(double x, double y);
+
+
 };
 
 

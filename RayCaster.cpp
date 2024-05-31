@@ -1,5 +1,6 @@
 #include <cmath>
 #include <utility>
+#include <algorithm>
 #include "RayCaster.h"
 
 Pixel::Coordinate RayCaster::getGridCoordinate(double x, double y) {
@@ -144,34 +145,31 @@ std::vector<Pixel::Coordinate> RayCaster::castRay(double xStart, double yStart, 
     return intersectedPixels;
 }
 
-void RayCaster::setCameraView(Camera& camera) {
+void RayCaster::setCameraView(Camera& camera, int numRays) {
     // Compute the center of the pixel that the rays are going to be cast from
     std::pair<double, double> center = getMiddle(camera.getPosition().x, camera.getPosition().y);
 
-    // Cast a ray from the pixel to each edge pixel and add the corresponding pixels to the visibility field of the pixels.
-    for(auto edgePixel : edges){
-        // Check if the pixel cast from the camera to the edge lies within what the camera can see.
-        if(isInView(camera, edgePixel.first, edgePixel.second)){
-            // Cast ray
-            std::vector<Pixel::Coordinate> rayPixels = castRay(center.first, center.second,  edgePixel.first, edgePixel.second);
+    std::vector<std::pair<double, double>> dirs = generateDirections(camera, numRays);
+    for(auto direction : dirs){
+        // Cast ray
+        std::vector<Pixel::Coordinate> rayPixels = castRayDir(center.first, center.second, direction.first, direction.second);
 
-            // Go through ray and add visible pixels until an obstacle is hit.
-            std::vector<Pixel::Coordinate> visiblePixels{};
-            for(int j = 1; j < rayPixels.size(); j++){
-                // Get current pixel
-                Pixel::Coordinate rayPixel = rayPixels[j];
+        // Go through ray and add visible pixels until an obstacle is hit.
+        std::vector<Pixel::Coordinate> visiblePixels{};
+        for(int j = 1; j < rayPixels.size(); j++){
+            // Get current pixel
+            Pixel::Coordinate rayPixel = rayPixels[j];
 
-                // Check if a pixel should be added, ending loop if an object has been hit
-                if(image->getPixelType(rayPixel) == Pixel::INTERIOR){
-                    break; // should not happen, given that the input is formatted correctly
-                }
-                if(image->getPixelType(rayPixel) == Pixel::SURFACE){
-                    visiblePixels.push_back(rayPixel);
-                    break;
-                }
+            // Check if a pixel should be added, ending loop if an object has been hit
+            if(image->getPixelType(rayPixel) == Pixel::INTERIOR){
+                break; // should not happen, given that the input is formatted correctly
             }
-            camera.addVisibleSurfacePixels(visiblePixels);
+            if(image->getPixelType(rayPixel) == Pixel::SURFACE){
+                visiblePixels.push_back(rayPixel);
+                break;
+            }
         }
+        camera.addVisibleSurfacePixels(visiblePixels);
     }
 }
 
@@ -190,4 +188,87 @@ bool RayCaster::isInView(Camera camera, int x, int y) {
 
     // Check that the vector is within the visible angle of the camera
     return fabs(angle) <= camera.getOpeningAngle() / 2;
+}
+
+std::vector<Pixel::Coordinate> RayCaster::castRayDir(double xStart, double yStart, double xDir, double yDir) {
+    // DDA
+    double d = sqrt(pow(xDir, 2) + pow(yDir, 2));
+    xDir = xDir / d;
+    yDir = yDir / d;
+
+    // Calculate the unit step size vector (How much along the ray do I need to go to march length one along the x or y-axis).
+    double unitStepSizeX = sqrt(1 + pow(yDir / xDir, 2));
+    double unitStepSizeY = sqrt(1 + pow(xDir / yDir, 2));
+
+    // Get starting pixel
+    Pixel::Coordinate currentGridCoordinate = getGridCoordinate(xStart, yStart);
+
+    // Length of the ray that goes towards the next intersection in the x or y direction
+    double currentRayLengthX;
+    double currentRayLengthY;
+
+    // General direction of the ray (up / down / left / right)
+    int stepX = xDir < 0 ? -1 : 1;
+    int stepY = yDir < 0 ? -1 : 1;
+
+    // Find the intersection from the starting point to the edge of the current cell
+    // Ray goes from right to left
+    if(stepX < 0){
+        currentRayLengthX = (xStart - currentGridCoordinate.x ) * unitStepSizeX;
+    }
+        // Ray goes from left to right
+    else{
+        currentRayLengthX = (currentGridCoordinate.x + 1 - xStart) * unitStepSizeX;
+    }
+    // Ray goes upwards
+    if(stepY < 0){
+        currentRayLengthY = (yStart - currentGridCoordinate.y) * unitStepSizeY;
+    }
+        // Ray goes downwards
+    else{
+        currentRayLengthY = (currentGridCoordinate.y + 1 - yStart) * unitStepSizeY;
+    }
+
+    bool obstacleHit = false;
+    std::vector<Pixel::Coordinate> intersectedPixels{};
+    while(!image->isEdge(currentGridCoordinate)){
+        // Add the current pixel
+        intersectedPixels.push_back(currentGridCoordinate);
+
+        // Determine if we should walk in the x or y direction and update the current pixel
+        if(currentRayLengthX < currentRayLengthY){
+            currentGridCoordinate.x += stepX;
+            currentRayLengthX += unitStepSizeX;
+        }
+        else{
+            currentGridCoordinate.y += stepY;
+            currentRayLengthY += unitStepSizeY;
+        }
+    }
+
+    intersectedPixels.push_back(currentGridCoordinate);
+
+    return intersectedPixels;
+}
+
+std::vector<std::pair<double, double>> RayCaster::generateDirections(Camera cam, int numDirs) {
+    std::pair<double, double> currentVector = rotateVector(cam.getDirection(), -cam.getOpeningAngle() / 2);
+    std::vector<std::pair<double, double>> result{};
+    for(int i = 0; i < numDirs; i++){
+        result.push_back(currentVector);
+        currentVector = rotateVector(currentVector, cam.getOpeningAngle() / (numDirs - 1));
+    }
+    return result;
+}
+
+std::pair<double, double> RayCaster::rotateVector(std::pair<double, double> vector, double rotationAngle) {
+    // Convert to radians
+    double angleRadians = rotationAngle * (M_PI / 180);
+
+    // Calculate result
+    double x = vector.first * cos(angleRadians) + vector.second * sin(angleRadians);
+    double y = -vector.first * sin(angleRadians) + vector.second * cos(angleRadians);
+
+    std::pair<double, double> result{x, y};
+    return result;
 }

@@ -17,8 +17,8 @@ TEST_F(CameraGeneratorTest, oneCamPerDir){
         }
     }
 
-    compareOutputs(cameras, generator.generateCameras());
-    ASSERT_EQ(cameras, generator.generateCameras());
+    compareOutputs(cameras, generator.generateCameras(10));
+    ASSERT_EQ(cameras, generator.generateCameras(10));
 }
 
 TEST_F(CameraGeneratorTest, twoCamsPerDir){
@@ -40,8 +40,8 @@ TEST_F(CameraGeneratorTest, twoCamsPerDir){
         }
     }
 
-    compareOutputs(cameras, generator.generateCameras());
-    ASSERT_EQ(cameras, generator.generateCameras());
+    compareOutputs(cameras, generator.generateCameras(10));
+    ASSERT_EQ(cameras, generator.generateCameras(10));
 }
 
 TEST_F(CameraGeneratorTest, fourCamsPerDir){
@@ -67,8 +67,8 @@ TEST_F(CameraGeneratorTest, fourCamsPerDir){
         }
     }
 
-    compareOutputs(cameras, generator.generateCameras());
-    ASSERT_EQ(cameras, generator.generateCameras());
+    compareOutputs(cameras, generator.generateCameras(10));
+    ASSERT_EQ(cameras, generator.generateCameras(10));
 }
 
 TEST_F(CameraGeneratorTest, threeCamsPerDir){
@@ -91,10 +91,10 @@ TEST_F(CameraGeneratorTest, threeCamsPerDir){
             }
         }
     }
-    generator.generateCameras();
+    generator.generateCameras(10);
 
-    compareOutputs(cameras, generator.generateCameras());
-    ASSERT_EQ(cameras, generator.generateCameras());
+    compareOutputs(cameras, generator.generateCameras(10));
+    ASSERT_EQ(cameras, generator.generateCameras(10));
 }
 
 

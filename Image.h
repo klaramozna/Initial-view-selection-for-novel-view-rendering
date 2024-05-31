@@ -81,6 +81,13 @@ public:
      */
     std::vector<Pixel::Coordinate> getSurfacePixels();
 
+    /**
+     * @brief Returns true if the given coordinate is on the edge of the image.
+     * @param coor Coordinate that should be evaluated.
+     * @return True if the given coordinate is on the edge of the image, false otherwise.
+     */
+    bool isEdge(Pixel::Coordinate coor);
+
 private:
 
     /**
