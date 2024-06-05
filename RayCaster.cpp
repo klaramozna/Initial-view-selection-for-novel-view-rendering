@@ -231,7 +231,7 @@ std::vector<Pixel::Coordinate> RayCaster::castRayDir(double xStart, double yStar
 
     bool obstacleHit = false;
     std::vector<Pixel::Coordinate> intersectedPixels{};
-    while(!image->isEdge(currentGridCoordinate)){
+    while(image->isWithin(currentGridCoordinate)){
         // Add the current pixel
         intersectedPixels.push_back(currentGridCoordinate);
 
@@ -246,17 +246,17 @@ std::vector<Pixel::Coordinate> RayCaster::castRayDir(double xStart, double yStar
         }
     }
 
-    intersectedPixels.push_back(currentGridCoordinate);
-
     return intersectedPixels;
 }
 
 std::vector<std::pair<double, double>> RayCaster::generateDirections(Camera cam, int numDirs) {
+
     std::pair<double, double> currentVector = rotateVector(cam.getDirection(), -cam.getOpeningAngle() / 2);
+    double division = cam.getOpeningAngle() < 360 ? numDirs - 1 : numDirs;
     std::vector<std::pair<double, double>> result{};
     for(int i = 0; i < numDirs; i++){
         result.push_back(currentVector);
-        currentVector = rotateVector(currentVector, cam.getOpeningAngle() / (numDirs - 1));
+        currentVector = rotateVector(currentVector, cam.getOpeningAngle() / division);
     }
     return result;
 }

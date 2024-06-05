@@ -86,7 +86,7 @@ public:
      * @param coor Coordinate that should be evaluated.
      * @return True if the given coordinate is on the edge of the image, false otherwise.
      */
-    bool isEdge(Pixel::Coordinate coor);
+    bool isWithin(Pixel::Coordinate coor);
 
 private:
 

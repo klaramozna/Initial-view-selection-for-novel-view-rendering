@@ -16,10 +16,14 @@ add_executable(
         ../Camera.cpp
         ../CameraGenerator.h
         ../CameraGenerator.cpp
+        ../CameraPlacementFinder.h
+        ../CameraPlacementFinder.cpp
         SimpleRayCastTest.cpp
         SimpleRayCastTest.h
         CameraGeneratorTest.cpp
         CameraGeneratorTest.h
+        CameraPlacementFinderTest.cpp
+        CameraPlacementFinderTest.h
 )
 
 target_link_libraries(

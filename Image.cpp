@@ -138,6 +138,6 @@ std::set<Pixel::Coordinate> Image::getVisiblePixels(int x, int y) {
     return pixels[index].getVisiblePixels();
 }
 
-bool Image::isEdge(Pixel::Coordinate coor) {
-     return coor.x == 0 || coor.y == 0 || coor.x == width - 1 || coor.y == height -1;
+bool Image::isWithin(Pixel::Coordinate coor) {
+     return coor.x >= 0 && coor.y >= 0 && coor.x <= width - 1 && coor.y <= height - 1;
 }
