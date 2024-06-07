@@ -17,7 +17,7 @@ std::vector<Camera> CameraPlacementFinder::solveGreedyStrategy() {
     while(!uncoveredPixels.empty()){
         // Check if any more cameras are left, if yes, this indicates there is no solution.
         if(allCameras.empty()){
-            return std::vector<Camera>{};
+            return result;
         }
         // Find the camera that "sees" the largest number of uncovered pixels and add it to the result.
         Camera nextCam = getBestSubset(uncoveredPixels);
@@ -30,24 +30,27 @@ std::vector<Camera> CameraPlacementFinder::solveGreedyStrategy() {
         }
 
         // Remove the camera just added from allCameras
-        allCameras.erase(nextCam);
+        for(int i = 0; i < allCameras.size(); i++){
+            if(allCameras[i].first == nextCam){
+                allCameras[i].second = false;
+            }
+        }
     }
-
-    return result;
+    return removeRedundantCameras(result, uncoveredPixelsUnchanged);
 }
 
 Camera CameraPlacementFinder::getBestSubset(const std::set<Pixel::Coordinate>& uncoveredPixels) {
     Camera finalCamera{};
     int maxCount = 0;
     for(const auto& cam : allCameras){
-        std::set<Pixel::Coordinate> seenSet = cam.getVisibleSurfacePixels();
+        std::set<Pixel::Coordinate> seenSet = cam.first.getVisibleSurfacePixels();
         int currentCount = 0;
         for(auto pixel : seenSet){
             if(uncoveredPixels.count(pixel) > 0) currentCount++;
         }
         if(currentCount >= maxCount){
             maxCount = currentCount;
-            finalCamera = cam;
+            finalCamera = cam.first;
         }
     }
     return finalCamera;
@@ -55,12 +58,29 @@ Camera CameraPlacementFinder::getBestSubset(const std::set<Pixel::Coordinate>& u
 
 CameraPlacementFinder::CameraPlacementFinder(const std::vector<Camera>& cameras, int imageHeight, int imageWidth): imHeight{imageHeight}, imWidth{imageWidth} {
     for (const auto& camera: cameras){
-        allCameras.insert(camera);
+        allCameras.push_back({camera, true});
     }
 }
 
 void CameraPlacementFinder::setInitialCameras(const std::vector<Camera> &cameras) {
     for(auto cam : cameras){
-        allCameras.insert(cam);
+        allCameras.push_back({cam, true});
     }
+}
+
+std::vector<Camera>
+CameraPlacementFinder::removeRedundantCameras(std::vector<Camera> cameras, std::set<Pixel::Coordinate> pixelsToCover) {
+    std::vector<Camera> finalResult{};
+    for(auto camRemove : cameras){
+        std::set<Pixel::Coordinate> coveredWithoutThisCam{};
+        for(auto cam : cameras){
+            if(cam != camRemove){
+                coveredWithoutThisCam.insert(cam.getVisibleSurfacePixels().begin(), cam.getVisibleSurfacePixels().end());
+            }
+        }
+        if(coveredWithoutThisCam != pixelsToCover){
+            finalResult.push_back(camRemove);
+        }
+    }
+    return finalResult;
 }

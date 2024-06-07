@@ -41,9 +41,9 @@ public:
 private:
 
     /**
-     * @brief All possible cameras.
+     * @brief All possible cameras. For each camera, the second value is true if it has not been iterated over yet.
      */
-    std::set<Camera> allCameras;
+    std::vector<std::pair<Camera, bool>> allCameras;
 
     /**
      * @brief Height of the image in which the cameras are placed.

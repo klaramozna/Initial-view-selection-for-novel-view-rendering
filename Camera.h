@@ -50,6 +50,8 @@ public:
 
     bool operator==(const Camera& other) const;
 
+    bool operator!=(const Camera& other) const;
+
     bool operator<(const Camera& other) const;
 
 private:

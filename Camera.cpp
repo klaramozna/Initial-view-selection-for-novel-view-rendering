@@ -17,3 +17,7 @@ bool Camera::operator==(const Camera &other) const {
 bool Camera::operator<(const Camera &other) const {
     return position < other.position;
 }
+
+bool Camera::operator!=(const Camera &other) const {
+    return !(other == *this);
+}
