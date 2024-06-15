@@ -3,7 +3,7 @@
 TEST_F(CameraGeneratorTest, oneCamPerDir){
     image0.readFromFile("/home/klara/CLionProjects/Initial-view-selection-for-novel-view-rendering/input/test_input2.ssv");
     std::shared_ptr<Image> im = std::make_shared<Image>(image0);
-    RayCaster rayCaster{im};
+    RayCaster rayCaster{im, 50};
     CameraGenerator generator{1, 47, image0, rayCaster};
 
     // Create correct answer
@@ -17,14 +17,14 @@ TEST_F(CameraGeneratorTest, oneCamPerDir){
         }
     }
 
-    compareOutputs(cameras, generator.generateCameras(10));
-    ASSERT_EQ(cameras, generator.generateCameras(10));
+    compareOutputs(cameras, generator.generateCameras());
+    ASSERT_EQ(cameras, generator.generateCameras());
 }
 
 TEST_F(CameraGeneratorTest, twoCamsPerDir){
     image0.readFromFile("/home/klara/CLionProjects/Initial-view-selection-for-novel-view-rendering/input/test_input2.ssv");
     std::shared_ptr<Image> im = std::make_shared<Image>(image0);
-    RayCaster rayCaster{im};
+    RayCaster rayCaster{im, 50};
     CameraGenerator generator{2, 47, image0, rayCaster};
 
     // Create correct answer
@@ -40,14 +40,14 @@ TEST_F(CameraGeneratorTest, twoCamsPerDir){
         }
     }
 
-    compareOutputs(cameras, generator.generateCameras(10));
-    ASSERT_EQ(cameras, generator.generateCameras(10));
+    compareOutputs(cameras, generator.generateCameras());
+    ASSERT_EQ(cameras, generator.generateCameras());
 }
 
 TEST_F(CameraGeneratorTest, fourCamsPerDir){
     image0.readFromFile("/home/klara/CLionProjects/Initial-view-selection-for-novel-view-rendering/input/test_input2.ssv");
     std::shared_ptr<Image> im = std::make_shared<Image>(image0);
-    RayCaster rayCaster{im};
+    RayCaster rayCaster{im, 50};
     CameraGenerator generator{4, 47, image0, rayCaster};
 
     // Create correct answer
@@ -67,14 +67,14 @@ TEST_F(CameraGeneratorTest, fourCamsPerDir){
         }
     }
 
-    compareOutputs(cameras, generator.generateCameras(10));
-    ASSERT_EQ(cameras, generator.generateCameras(10));
+    compareOutputs(cameras, generator.generateCameras());
+    ASSERT_EQ(cameras, generator.generateCameras());
 }
 
 TEST_F(CameraGeneratorTest, threeCamsPerDir){
     image0.readFromFile("/home/klara/CLionProjects/Initial-view-selection-for-novel-view-rendering/input/test_input2.ssv");
     std::shared_ptr<Image> im = std::make_shared<Image>(image0);
-    RayCaster rayCaster{im};
+    RayCaster rayCaster{im, 50};
     CameraGenerator generator{3, 47, image0, rayCaster};
 
     // Create correct answer
@@ -91,10 +91,10 @@ TEST_F(CameraGeneratorTest, threeCamsPerDir){
             }
         }
     }
-    generator.generateCameras(10);
+    generator.generateCameras();
 
-    compareOutputs(cameras, generator.generateCameras(10));
-    ASSERT_EQ(cameras, generator.generateCameras(10));
+    compareOutputs(cameras, generator.generateCameras());
+    ASSERT_EQ(cameras, generator.generateCameras());
 }
 
 

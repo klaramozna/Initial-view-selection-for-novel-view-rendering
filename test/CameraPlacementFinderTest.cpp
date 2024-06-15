@@ -5,9 +5,9 @@
 
 TEST_F(CameraPlacementFinderTest, onePixel){
     std::shared_ptr<Image> imPtr = std::make_shared<Image>(image3);
-    RayCaster rayCaster{imPtr};
+    RayCaster rayCaster{imPtr, 1000};
     CameraGenerator generator{1, 360, image3, rayCaster};
-    auto cams = generator.generateCameras(1000);
+    auto cams = generator.generateCameras();
     placementFinder.setInitialCameras(cams);
     placementFinder.setImage(image3);
     std::vector<Camera> result = placementFinder.solveGreedyStrategy();

@@ -20,7 +20,7 @@ std::vector<std::pair<double, double>> CameraGenerator::getDirections() const {
     return dirs;
 }
 
-std::vector<Camera> CameraGenerator::generateCameras(int numDirs) {
+std::vector<Camera> CameraGenerator::generateCameras() {
     std::vector<Camera> result{};
     for(int x = 0; x < image.getWidth(); x++){
         for(int y = 0; y < image.getHeight(); y++){
@@ -30,7 +30,7 @@ std::vector<Camera> CameraGenerator::generateCameras(int numDirs) {
                     if(x == 6 && y == 4){
                         int i = 0;
                     }
-                    rayCaster.setCameraView(cam, numDirs);
+                    rayCaster.setCameraView(cam);
                     result.push_back(cam);
                 }
             }

@@ -36,8 +36,9 @@ void RayCaster::computeVisibilityForPixel(int x, int y) {
 
 }
 
-RayCaster::RayCaster(const std::shared_ptr<Image>& image): image{image} {
+RayCaster::RayCaster(const std::shared_ptr<Image>& image, int rayNum): image{image} {
     initializeEdges(image->getWidth(), image->getHeight());
+    numRays = rayNum;
 }
 
 std::pair<double, double> RayCaster::getMiddle(int x, int y) {
@@ -145,7 +146,7 @@ std::vector<Pixel::Coordinate> RayCaster::castRay(double xStart, double yStart, 
     return intersectedPixels;
 }
 
-void RayCaster::setCameraView(Camera& camera, int numRays) {
+void RayCaster::setCameraView(Camera& camera) {
     // Compute the center of the pixel that the rays are going to be cast from
     std::pair<double, double> center = getMiddle(camera.getPosition().x, camera.getPosition().y);
 

@@ -19,7 +19,7 @@ public:
      * @brief Creates a RayCaster object with the given image.
      * @param image The image for which the visibility cones will be computed.
      */
-    explicit RayCaster(const std::shared_ptr<Image>& image);
+    explicit RayCaster(const std::shared_ptr<Image>& image,  int rayNum);
 
     /**
      * @brief For each pixel, all pixels that "see" it are stored.
@@ -37,9 +37,14 @@ public:
      * @param camera The camera that the results get stored to.
      * @param numRays Number of rays that are cast evenly across the cameras view.
      */
-    void setCameraView(Camera& camera, int numRays);
+    void setCameraView(Camera& camera);
 
 private:
+
+    /**
+     * @brief Number of rays cast per camera.
+     */
+    int numRays;
 
     /**
      * @brief Image to be modified.

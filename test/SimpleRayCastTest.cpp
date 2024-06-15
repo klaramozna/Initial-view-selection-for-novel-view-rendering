@@ -12,7 +12,7 @@ void SimpleRayCastTest::SetUp() {
 TEST_F(SimpleRayCastTest, noObstacles){
     Camera cam{Pixel::Coordinate{5, 3}, std::pair<double, double>{1, 1}, 360};
     rayCast.setImage(testImage0);
-    rayCast.setCameraView(cam, 50);
+    rayCast.setCameraView(cam);
 
     // Create the set for the correct answer (all pixels except for the single surface pixel)
     std::set<Pixel::Coordinate> correctAnswer;
@@ -40,7 +40,7 @@ TEST_F(SimpleRayCastTest, noObstacles){
 TEST_F(SimpleRayCastTest, simpleObstacle){
     Camera cam{Pixel::Coordinate{9, 7}, std::pair<double, double>{-1, 0}, 110};
     rayCast.setImage(testImage1);
-    rayCast.setCameraView(cam, 500);
+    rayCast.setCameraView(cam);
     DebugVisualize visualize(*testImage1);
     visualize.visualizeCamera(cam);
 

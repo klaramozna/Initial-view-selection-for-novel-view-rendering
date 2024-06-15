@@ -24,6 +24,8 @@ add_executable(
         CameraGeneratorTest.h
         CameraPlacementFinderTest.cpp
         CameraPlacementFinderTest.h
+        PlacementFind1Test.cpp
+        PlacementFind1Test.h
 )
 
 target_link_libraries(

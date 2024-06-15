@@ -28,6 +28,8 @@ add_executable(Initial_view_selection_for_novel_view_rendering
         CameraGenerator.h
         CameraPlacementFinder.cpp
         CameraPlacementFinder.h
+        PlacementFind1.cpp
+        PlacementFind1.h
 )
 
 add_subdirectory(test)
