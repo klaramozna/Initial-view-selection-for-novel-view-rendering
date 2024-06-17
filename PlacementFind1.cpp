@@ -25,7 +25,7 @@ std::vector<Camera> PlacementFind1::solve() {
     // For each pixel that has not been seen yet, place a camera right next to it, facing the pixel
     for(int x = 0; x < im.getWidth(); x++){
         for(int y = 0; y < im.getHeight(); y++) {
-            if(pixelsCovered.count({x, y}) <= 0){
+            if(im.getPixelType(x, y) == Pixel::SURFACE && pixelsCovered.count({x, y}) <= 0){
                 Camera cam = getNeighbourCamera(x, y);
                 if(Pixel::Coordinate{x, y} != cam.getPosition()){
                     result.push_back(cam);
@@ -46,16 +46,24 @@ std::vector<Camera> PlacementFind1::solve() {
 
 std::vector<Camera>
 PlacementFind1::removeRedundantCameras(std::vector<Camera> cameras, std::set<Pixel::Coordinate> pixelsToCover) {
+    std::vector<std::pair<Camera, bool>> cams{};
+    for(auto cam : cameras){
+        cams.emplace_back(cam, true);
+    }
+
     std::vector<Camera> finalResult{};
-    for(auto camRemove : cameras){
+    for(int i = 0; i < cams.size(); i++){
         std::set<Pixel::Coordinate> coveredWithoutThisCam{};
-        for(auto cam : cameras){
-            if(cam != camRemove){
-                coveredWithoutThisCam.insert(cam.getVisibleSurfacePixels().begin(), cam.getVisibleSurfacePixels().end());
+        for(int j = 0; j < cams.size(); j++){
+            if(cams[j].first != cams[i].first && cams[j].second){
+                coveredWithoutThisCam.insert(cams[j].first.getVisibleSurfacePixels().begin(), cams[j].first.getVisibleSurfacePixels().end());
             }
         }
         if(coveredWithoutThisCam != pixelsToCover){
-            finalResult.push_back(camRemove);
+            finalResult.push_back(cams[i].first);
+        }
+        else{
+            cams[i].second = false;
         }
     }
     return finalResult;

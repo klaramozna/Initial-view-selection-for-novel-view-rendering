@@ -7,6 +7,8 @@
 
 class PlacementFind1 {
 public:
+
+    PlacementFind1() = default;
     /**
      * @brief Creates a PlacementFind1 object with the given parameters.
      * @param image Image that the camera placement should be determined for.
@@ -19,6 +21,12 @@ public:
      * @return Vector of cameras that together "see" the entire object on the image.
      */
     std::vector<Camera> solve();
+
+    void setImage(Image image){im = image;};
+
+    void setRayCast(RayCaster rayCaster){rayCast = rayCaster;};
+
+    void setAngle(double angle){cameraAngle = angle;};
 
 private:
     /**

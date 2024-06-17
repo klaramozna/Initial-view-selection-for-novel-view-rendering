@@ -18,6 +18,8 @@ add_executable(
         ../CameraGenerator.cpp
         ../CameraPlacementFinder.h
         ../CameraPlacementFinder.cpp
+        ../PlacementFind1.h
+        ../PlacementFind1.cpp
         SimpleRayCastTest.cpp
         SimpleRayCastTest.h
         CameraGeneratorTest.cpp

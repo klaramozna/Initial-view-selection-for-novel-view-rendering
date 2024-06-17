@@ -70,7 +70,7 @@ void CameraPlacementFinder::setInitialCameras(const std::vector<Camera> &cameras
 
 std::vector<Camera>
 CameraPlacementFinder::removeRedundantCameras(std::vector<Camera> cameras, std::set<Pixel::Coordinate> pixelsToCover) {
-    std::vector<Camera> finalResult{};
+    /*std::vector<Camera> finalResult{};
     for(auto camRemove : cameras){
         std::set<Pixel::Coordinate> coveredWithoutThisCam{};
         for(auto cam : cameras){
@@ -80,6 +80,27 @@ CameraPlacementFinder::removeRedundantCameras(std::vector<Camera> cameras, std::
         }
         if(coveredWithoutThisCam != pixelsToCover){
             finalResult.push_back(camRemove);
+        }
+    }
+    return finalResult;*/
+    std::vector<std::pair<Camera, bool>> cams{};
+    for(auto cam : cameras){
+        cams.emplace_back(cam, true);
+    }
+
+    std::vector<Camera> finalResult{};
+    for(int i = 0; i < cams.size(); i++){
+        std::set<Pixel::Coordinate> coveredWithoutThisCam{};
+        for(int j = 0; j < cams.size(); j++){
+            if(cams[j].first != cams[i].first && cams[j].second){
+                coveredWithoutThisCam.insert(cams[j].first.getVisibleSurfacePixels().begin(), cams[j].first.getVisibleSurfacePixels().end());
+            }
+        }
+        if(coveredWithoutThisCam != pixelsToCover){
+            finalResult.push_back(cams[i].first);
+        }
+        else{
+            cams[i].second = false;
         }
     }
     return finalResult;
