@@ -16,6 +16,10 @@ FetchContent_MakeAvailable(googletest)
 set(COINOR_INCLUDE_DIR /usr/include/coin)
 set(COINOR_LIB_DIR /usr/lib/x86_64-linux-gnu)  # or /usr/lib/ if not on a 64-bit system
 
+# Find SDL2 library
+find_package(SDL2 REQUIRED)
+include_directories(${SDL2_INCLUDE_DIRS})
+
 # Add include directories
 include_directories(${COINOR_INCLUDE_DIR})
 
@@ -40,6 +44,8 @@ add_executable(Initial_view_selection_for_novel_view_rendering
         ILPSolve.cpp
         ILPSolve.h
         ILPSolve.cpp
+        Visualizer.cpp
+        Visualizer.h
 )
 
 # Link Coin-OR libraries
@@ -50,6 +56,7 @@ target_link_libraries(Initial_view_selection_for_novel_view_rendering
         ${COINOR_LIB_DIR}/libOsiClp.so
         ${COINOR_LIB_DIR}/libCgl.so
         ${COINOR_LIB_DIR}/libCoinUtils.so
+        ${SDL2_LIBRARIES}
         # Add other required Coin-OR libraries here if any
 )
 
