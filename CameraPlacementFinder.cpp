@@ -17,7 +17,7 @@ std::vector<Camera> CameraPlacementFinder::solveGreedyStrategy() {
     while(!uncoveredPixels.empty()){
         // Check if any more cameras are left, if yes, this indicates there is no solution.
         if(allCameras.empty()){
-            return result;
+            return{};
         }
         // Find the camera that "sees" the largest number of uncovered pixels and add it to the result.
         Camera nextCam = getBestSubset(uncoveredPixels);

@@ -7,7 +7,7 @@ std::vector<Camera> PlacementFind1::solve() {
     std::pair<double, double> middle{im.getWidth() / 2.0, im.getHeight() / 2.0};
     for(int x = 0; x < im.getWidth(); x++){
         for(int y = 0; y < im.getHeight(); y++){
-            if(im.getPixelType(x, y) == Pixel::EMPTY_SPACE){
+            if(im.getPixelType(x, y) == Pixel::EMPTY_SPACE && (x == 0 || y == 0 || x == im.getWidth() - 1 || y == im.getHeight() - 1)){
                 std::pair<double, double> dir{middle.first - (x + 0.5), middle.second - (y + 0.5)};
                 Camera cam{{x, y}, dir, cameraAngle};
                 rayCast.setCameraView(cam);
@@ -29,6 +29,9 @@ std::vector<Camera> PlacementFind1::solve() {
                 Camera cam = getNeighbourCamera(x, y);
                 if(Pixel::Coordinate{x, y} != cam.getPosition()){
                     result.push_back(cam);
+                }
+                else{
+                    return{};
                 }
             }
         }
@@ -74,9 +77,11 @@ Camera PlacementFind1::getNeighbourCamera(int x, int y) {
         for(int j : {-1, 0, 1}){
             if(i != 0 || j != 0){
                 if(x + i >= 0 && x + i < im.getWidth() && y + j >= 0 && y + j < im.getHeight() && im.getPixelType(x + i, y + j) == Pixel::EMPTY_SPACE){
-                    Camera cam{{x+i, y+j}, {i, j}, cameraAngle};
-                    rayCast.setCameraView(cam);
-                    return cam;
+                    if(i == 0 || j == 0){
+                        Camera cam{{x+i, y+j}, {-i, -j}, cameraAngle};
+                        rayCast.setCameraView(cam);
+                        return cam;
+                    }
                 }
             }
         }
