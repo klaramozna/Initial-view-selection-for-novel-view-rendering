@@ -7,8 +7,8 @@
 
 TEST_F(ILPSolveTest, onePixel){
     std::shared_ptr<Image> imPtr = std::make_shared<Image>(image3);
-    RayCaster rayCaster{imPtr, 1000};
-    CameraGenerator generator{4, 90, image3, rayCaster};
+    RayCaster rayCaster{imPtr, 2000};
+    CameraGenerator generator{1, 360, image3, rayCaster};
     auto cams = generator.generateCameras();
     solver.setCameras(cams);
     solver.setImage(image3);
@@ -25,5 +25,5 @@ TEST_F(ILPSolveTest, onePixel){
 }
 
 void ILPSolveTest::SetUp() {
-    image3.readFromFile("/home/klara/CLionProjects/Initial-view-selection-for-novel-view-rendering/input/test_input1.ssv");
+    image3.readFromFile("/home/klara/CLionProjects/Initial-view-selection-for-novel-view-rendering/input/test_input2.ssv");
 }
