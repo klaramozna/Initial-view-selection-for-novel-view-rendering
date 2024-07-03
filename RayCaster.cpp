@@ -153,24 +153,10 @@ void RayCaster::setCameraView(Camera& camera) {
     std::vector<std::pair<double, double>> dirs = generateDirections(camera, numRays);
     for(auto direction : dirs){
         // Cast ray
-        std::vector<Pixel::Coordinate> rayPixels = castRayDir(center.first, center.second, direction.first, direction.second);
-
-        // Go through ray and add visible pixels until an obstacle is hit.
-        std::vector<Pixel::Coordinate> visiblePixels{};
-        for(int j = 1; j < rayPixels.size(); j++){
-            // Get current pixel
-            Pixel::Coordinate rayPixel = rayPixels[j];
-
-            // Check if a pixel should be added, ending loop if an object has been hit
-            if(image->getPixelType(rayPixel) == Pixel::INTERIOR){
-                break; // should not happen, given that the input is formatted correctly
-            }
-            if(image->getPixelType(rayPixel) == Pixel::SURFACE){
-                visiblePixels.push_back(rayPixel);
-                break;
-            }
+        Pixel::Coordinate hitPixel = castRayDir(center.first, center.second, direction.first, direction.second);
+        if(hitPixel != Pixel::Coordinate{-1, -1}){
+            camera.addVisibleSurfacePixels({hitPixel});
         }
-        camera.addVisibleSurfacePixels(visiblePixels);
     }
 }
 
@@ -191,7 +177,7 @@ bool RayCaster::isInView(Camera camera, int x, int y) {
     return fabs(angle) <= camera.getOpeningAngle() / 2;
 }
 
-std::vector<Pixel::Coordinate> RayCaster::castRayDir(double xStart, double yStart, double xDir, double yDir) {
+Pixel::Coordinate RayCaster::castRayDir(double xStart, double yStart, double xDir, double yDir) {
     // DDA
     double d = sqrt(pow(xDir, 2) + pow(yDir, 2));
     xDir = xDir / d;
@@ -231,10 +217,10 @@ std::vector<Pixel::Coordinate> RayCaster::castRayDir(double xStart, double yStar
     }
 
     bool obstacleHit = false;
-    std::vector<Pixel::Coordinate> intersectedPixels{};
     while(image->isWithin(currentGridCoordinate)){
-        // Add the current pixel
-        intersectedPixels.push_back(currentGridCoordinate);
+        if(image->getPixelType(currentGridCoordinate) == Pixel::SURFACE){
+            return currentGridCoordinate;
+        }
 
         // Determine if we should walk in the x or y direction and update the current pixel
         if(currentRayLengthX < currentRayLengthY){
@@ -247,7 +233,7 @@ std::vector<Pixel::Coordinate> RayCaster::castRayDir(double xStart, double yStar
         }
     }
 
-    return intersectedPixels;
+    return {-1, -1};
 }
 
 std::vector<std::pair<double, double>> RayCaster::generateDirections(Camera cam, int numDirs) {

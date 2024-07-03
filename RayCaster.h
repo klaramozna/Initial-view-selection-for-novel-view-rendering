@@ -153,7 +153,7 @@ protected:
      * @param yDir Y coordinate of the direction vector.
      * @return Vector of the coordinates of pixels that the line crosses.
      */
-    std::vector<Pixel::Coordinate> castRayDir(double xStart, double yStart, double xDir, double yDir);
+    Pixel::Coordinate castRayDir(double xStart, double yStart, double xDir, double yDir);
 
     /**
      * @brief Returns the (integer) coordinates of the pixel in which the given coordinates lie.
