@@ -46,6 +46,8 @@ add_executable(Initial_view_selection_for_novel_view_rendering
         ILPSolve.cpp
         Visualizer.cpp
         Visualizer.h
+        ILPSolveMulti.cpp
+        ILPSolveMulti.h
 )
 
 # Link Coin-OR libraries
