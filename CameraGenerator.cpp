@@ -24,7 +24,7 @@ std::vector<Camera> CameraGenerator::generateCameras() {
     std::vector<Camera> result{};
     for(int x = 0; x < image.getWidth(); x++){
         for(int y = 0; y < image.getHeight(); y++){
-            if(image.getPixelType(x, y) == Pixel::EMPTY_SPACE){
+            if(image.getPixelType(x, y) == Pixel::EMPTY_SPACE && x % detail == 0 && y % detail == 0){
                 for(auto direction : directions){
                     Camera cam{Pixel::Coordinate{x, y}, direction, cameraViewAngle};
                     if(x == 6 && y == 4){
