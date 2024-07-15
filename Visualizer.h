@@ -31,10 +31,11 @@ private:
     void renderGrid();
     bool saveScreenshotBMP(const char* filepath);
     double degToRad(double degrees);
-    std::vector<Pixel::Coordinate> castRayDir(double xStart, double yStart, double xDir, double yDir);
     Pixel::Coordinate getGridCoordinate(double x, double y);
-    std::vector<std::pair<int, int>> setCameraView(Camera& camera);
-
+    void drawArrow(int startX, int startY, int endX, int endY);
+    void drawFOV(int camX, int camY, double directionX, double directionY, double fovAngle);
+    void drawThickLine(SDL_Renderer* renderer, int x1, int y1, int x2, int y2, int thickness);
+    void drawArrow(SDL_Renderer* renderer, int x1, int y1, int x2, int y2, int thickness, int arrowSize);
     SDL_Window* window;
     SDL_Renderer* renderer;
     int windowWidth;

@@ -8,124 +8,8 @@ std::pair<double, double> getMiddle(int x, int y) {
     return std::pair<double, double>{x + 0.5, y + 0.5};
 }
 
-std::pair<double, double> rotateVector(std::pair<double, double> vector, double rotationAngle) {
-    // Convert to radians
-    double angleRadians = rotationAngle * (M_PI / 180);
-
-    // Calculate result
-    double x = vector.first * cos(angleRadians) + vector.second * sin(angleRadians);
-    double y = -vector.first * sin(angleRadians) + vector.second * cos(angleRadians);
-
-    std::pair<double, double> result{x, y};
-    return result;
-}
-
-std::vector<std::pair<double, double>> generateDirections(Camera cam, int numDirs) {
-
-    std::pair<double, double> currentVector = rotateVector(cam.getDirection(), -cam.getOpeningAngle() / 2);
-    double division = cam.getOpeningAngle() < 360 ? numDirs - 1 : numDirs;
-    std::vector<std::pair<double, double>> result{};
-    for(int i = 0; i < numDirs; i++){
-        result.push_back(currentVector);
-        currentVector = rotateVector(currentVector, cam.getOpeningAngle() / division);
-    }
-    return result;
-}
-
-std::vector<std::pair<int, int>> Visualizer::setCameraView(Camera& camera) {
-    // Compute the center of the pixel that the rays are going to be cast from
-    std::pair<double, double> center = getMiddle(camera.getPosition().x, camera.getPosition().y);
-    std::vector<std::pair<int, int>> result{};
-
-    std::vector<std::pair<double, double>> dirs = generateDirections(camera, 2);
-    Pixel::Coordinate rayPixel{0, 0};
-    for(auto direction : dirs){
-        // Cast ray
-        std::vector<Pixel::Coordinate> rayPixels = castRayDir(center.first, center.second, direction.first, direction.second);
-
-        // Go through ray and add visible pixels until an obstacle is hit.
-        for(int j = 1; j < rayPixels.size(); j++){
-            // Get current pixel
-            rayPixel = rayPixels[j];
-
-            // Check if a pixel should be added, ending loop if an object has been hit
-            if(image.getPixelType(rayPixel) == Pixel::INTERIOR){
-                break; // should not happen, given that the input is formatted correctly
-            }
-            if(image.getPixelType(rayPixel) == Pixel::SURFACE){
-                result.emplace_back(rayPixel.x, rayPixel.y);
-                break;
-            }
-        }
-        if(image.getPixelType(rayPixel) == Pixel::EMPTY_SPACE){
-            result.emplace_back(rayPixels[rayPixels.size() - 1].x, rayPixels[rayPixels.size() - 1].y );
-        }
-
-    }
-    return result;
-}
-
 Pixel::Coordinate Visualizer::getGridCoordinate(double x, double y) {
     return Pixel::Coordinate{static_cast<int>(std::floor(x)), static_cast<int>(std::floor(y))};
-}
-
-std::vector<Pixel::Coordinate> Visualizer::castRayDir(double xStart, double yStart, double xDir, double yDir) {
-    // DDA
-    double d = sqrt(pow(xDir, 2) + pow(yDir, 2));
-    xDir = xDir / d;
-    yDir = yDir / d;
-
-    // Calculate the unit step size vector (How much along the ray do I need to go to march length one along the x or y-axis).
-    double unitStepSizeX = sqrt(1 + pow(yDir / xDir, 2));
-    double unitStepSizeY = sqrt(1 + pow(xDir / yDir, 2));
-
-    // Get starting pixel
-    Pixel::Coordinate currentGridCoordinate = getGridCoordinate(xStart, yStart);
-
-    // Length of the ray that goes towards the next intersection in the x or y direction
-    double currentRayLengthX;
-    double currentRayLengthY;
-
-    // General direction of the ray (up / down / left / right)
-    int stepX = xDir < 0 ? -1 : 1;
-    int stepY = yDir < 0 ? -1 : 1;
-
-    // Find the intersection from the starting point to the edge of the current cell
-    // Ray goes from right to left
-    if(stepX < 0){
-        currentRayLengthX = (xStart - currentGridCoordinate.x ) * unitStepSizeX;
-    }
-        // Ray goes from left to right
-    else{
-        currentRayLengthX = (currentGridCoordinate.x + 1 - xStart) * unitStepSizeX;
-    }
-    // Ray goes upwards
-    if(stepY < 0){
-        currentRayLengthY = (yStart - currentGridCoordinate.y) * unitStepSizeY;
-    }
-        // Ray goes downwards
-    else{
-        currentRayLengthY = (currentGridCoordinate.y + 1 - yStart) * unitStepSizeY;
-    }
-
-    bool obstacleHit = false;
-    std::vector<Pixel::Coordinate> intersectedPixels{};
-    while(image.isWithin(currentGridCoordinate)){
-        // Add the current pixel
-        intersectedPixels.push_back(currentGridCoordinate);
-
-        // Determine if we should walk in the x or y direction and update the current pixel
-        if(currentRayLengthX < currentRayLengthY){
-            currentGridCoordinate.x += stepX;
-            currentRayLengthX += unitStepSizeX;
-        }
-        else{
-            currentGridCoordinate.y += stepY;
-            currentRayLengthY += unitStepSizeY;
-        }
-    }
-
-    return intersectedPixels;
 }
 
 Visualizer::Visualizer(int windowWidth, int windowHeight, int gridWidth, int gridHeight, int cellSize, Image im, std::vector<Camera> cams)
@@ -182,41 +66,65 @@ double Visualizer::degToRad(double degrees) {
     return degrees * PI / 180.0;
 }
 
+void Visualizer::drawThickLine(SDL_Renderer* renderer, int x1, int y1, int x2, int y2, int thickness) {
+    for (int i = -thickness / 2; i <= thickness / 2; ++i) {
+        SDL_RenderDrawLine(renderer, x1 + i, y1, x2 + i, y2);
+        SDL_RenderDrawLine(renderer, x1, y1 + i, x2, y2 + i);
+    }
+}
+
+void Visualizer::drawArrow(SDL_Renderer* renderer, int x1, int y1, int x2, int y2, int thickness, int arrowSize) {
+    drawThickLine(renderer, x1, y1, x2, y2, thickness);
+
+    double angle = std::atan2(y2 - y1, x2 - x1);
+
+    int arrowX1 = x2 - arrowSize * std::cos(angle - PI / 6);
+    int arrowY1 = y2 - arrowSize * std::sin(angle - PI / 6);
+    int arrowX2 = x2 - arrowSize * std::cos(angle + PI / 6);
+    int arrowY2 = y2 - arrowSize * std::sin(angle + PI / 6);
+
+    drawThickLine(renderer, x2, y2, arrowX1, arrowY1, thickness);
+    drawThickLine(renderer, x2, y2, arrowX2, arrowY2, thickness);
+}
+
 void Visualizer::renderGrid() {
     for (int y = 0; y < image.getHeight(); ++y) {
         for (int x = 0; x < image.getWidth(); ++x) {
             SDL_Rect cellRect = { x * cellSize, y * cellSize, cellSize, cellSize };
             if (image.getPixelType(x, y) != Pixel::EMPTY_SPACE) {
-                SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // Red for objects
+                SDL_SetRenderDrawColor(renderer, 100, 149, 237, 255); // Medium blue for objects
             } else {
-                SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255); // Blue for air
+                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // White for empty space
             }
             SDL_RenderFillRect(renderer, &cellRect);
 
-            // Draw grid lines
             SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
             SDL_RenderDrawRect(renderer, &cellRect);
         }
     }
 
-    // Draw cameras and their rays
-    for ( Camera& camera : cameras) {
+    for (Camera& camera : cameras) {
         SDL_Rect cameraRect = { camera.getPosition().x * cellSize + cellSize / 4, camera.getPosition().y * cellSize + cellSize / 4, cellSize / 2, cellSize / 2 };
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Black for cameras
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // Red for cameras
         SDL_RenderFillRect(renderer, &cameraRect);
 
-        int x1 = camera.getPosition().x * cellSize + cellSize / 2;
-        int y1 = camera.getPosition().y * cellSize + cellSize / 2;
+        auto [camX, camY] = getMiddle(camera.getPosition().x, camera.getPosition().y);
+        auto [dirX, dirY] = std::make_pair(camX + camera.getDirection().first, camY + camera.getDirection().second);
 
-        // TODO: get the right pixel
-        int x2Left = setCameraView(camera)[0].first  * cellSize + cellSize / 2;;
-        int y2Left = setCameraView(camera)[0].second * cellSize + cellSize / 2;;
-        int x2Right = setCameraView(camera)[1].first * cellSize + cellSize / 2;;
-        int y2Right = setCameraView(camera)[1].second * cellSize + cellSize / 2;;
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // Red for direction arrow
+        drawArrow(renderer, camX * cellSize, camY * cellSize, dirX * cellSize, dirY * cellSize, 3, 10);
 
-        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); // Green for rays
-        SDL_RenderDrawLine(renderer, x1, y1, x2Left, y2Left);
-        SDL_RenderDrawLine(renderer, x1, y1, x2Right, y2Right);
+        double fov = camera.getOpeningAngle();
+        double leftAngle = std::atan2(camera.getDirection().second, camera.getDirection().first) - degToRad(fov / 2.0);
+        double rightAngle = std::atan2(camera.getDirection().second, camera.getDirection().first) + degToRad(fov / 2.0);
+        double fovLength = 1.5;
+
+        auto [leftX, leftY] = std::make_pair(camX + fovLength * std::cos(leftAngle), camY + fovLength * std::sin(leftAngle));
+        auto [rightX, rightY] = std::make_pair(camX + fovLength * std::cos(rightAngle), camY + fovLength * std::sin(rightAngle));
+
+        SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255); // Blue for FOV arrows
+        drawArrow(renderer, camX * cellSize, camY * cellSize, leftX * cellSize, leftY * cellSize, 3, 10);
+        drawArrow(renderer, camX * cellSize, camY * cellSize, rightX * cellSize, rightY * cellSize, 3, 10);
     }
 }
 
@@ -260,7 +168,6 @@ void Visualizer::visualize() {
                 quit = true;
             } else if (event.type == SDL_KEYDOWN) {
                 if (event.key.keysym.sym == SDLK_s) {
-                    // Save screenshot when 's' key is pressed
                     if (saveScreenshotBMP("screenshot.bmp")) {
                         std::cout << "Screenshot saved successfully!" << std::endl;
                     } else {

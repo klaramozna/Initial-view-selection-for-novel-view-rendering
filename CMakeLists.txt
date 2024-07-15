@@ -49,7 +49,6 @@ add_executable(Initial_view_selection_for_novel_view_rendering
         ILPSolveMulti.cpp
         ILPSolveMulti.h
 )
-
 # Link Coin-OR libraries
 target_link_libraries(Initial_view_selection_for_novel_view_rendering
         ${COINOR_LIB_DIR}/libClp.so
