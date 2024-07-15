@@ -1,6 +1,8 @@
 #include "Visualizer.h"
 #include <iostream>
 #include <cmath>
+#include <set>
+#include <vector>
 
 const double PI = 3.14159265358979323846;
 
@@ -88,10 +90,20 @@ void Visualizer::drawArrow(SDL_Renderer* renderer, int x1, int y1, int x2, int y
 }
 
 void Visualizer::renderGrid() {
+    std::set<std::pair<int, int>> visiblePixels;
+    for (Camera& camera : cameras) {
+        auto visible = camera.getVisibleSurfacePixels();
+        for(auto vis : visible){
+            visiblePixels.insert({vis.x, vis.y});
+        }
+    }
+
     for (int y = 0; y < image.getHeight(); ++y) {
         for (int x = 0; x < image.getWidth(); ++x) {
             SDL_Rect cellRect = { x * cellSize, y * cellSize, cellSize, cellSize };
-            if (image.getPixelType(x, y) != Pixel::EMPTY_SPACE) {
+            if (visiblePixels.find({x, y}) != visiblePixels.end()) {
+                SDL_SetRenderDrawColor(renderer, 0, 0, 139, 255); // Dark blue for visible pixels
+            } else if (image.getPixelType(x, y) != Pixel::EMPTY_SPACE) {
                 SDL_SetRenderDrawColor(renderer, 100, 149, 237, 255); // Medium blue for objects
             } else {
                 SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // White for empty space
