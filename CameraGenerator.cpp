@@ -1,5 +1,6 @@
 #include "CameraGenerator.h"
 #include <cmath>
+#include <iostream>
 #include "RayCaster.h"
 
 
@@ -22,14 +23,11 @@ std::vector<std::pair<double, double>> CameraGenerator::getDirections() const {
 
 std::vector<Camera> CameraGenerator::generateCameras() {
     std::vector<Camera> result{};
-    for(int x = 0; x < image.getWidth(); x++){
-        for(int y = 0; y < image.getHeight(); y++){
-            if(image.getPixelType(x, y) == Pixel::EMPTY_SPACE && x % detail == 0 && y % detail == 0){
+    for(int x = 0; x < image.getWidth(); x = x + detail){
+        for(int y = 0; y < image.getHeight(); y = y + detail){
+            if(x < image.getWidth() && y < image.getHeight() && image.getPixelType(x, y) == Pixel::EMPTY_SPACE){
                 for(auto direction : directions){
                     Camera cam{Pixel::Coordinate{x, y}, direction, cameraViewAngle};
-                    if(x == 6 && y == 4){
-                        int i = 0;
-                    }
                     rayCaster.setCameraView(cam);
                     result.push_back(cam);
                 }

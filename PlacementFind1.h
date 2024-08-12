@@ -20,7 +20,7 @@ public:
      * @brief Returns a vector of cameras that together "see" the entire object on the image.
      * @return Vector of cameras that together "see" the entire object on the image.
      */
-    std::vector<Camera> solve();
+    std::vector<Camera> solve(int detail = 1);
 
     void setImage(Image image){im = image;};
 

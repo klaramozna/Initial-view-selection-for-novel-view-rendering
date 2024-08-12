@@ -37,7 +37,6 @@ void RayCaster::computeVisibilityForPixel(int x, int y) {
 }
 
 RayCaster::RayCaster(const std::shared_ptr<Image>& image, int rayNum): image{image} {
-    initializeEdges(image->getWidth(), image->getHeight());
     numRays = rayNum;
 }
 
@@ -79,7 +78,6 @@ void RayCaster::initializeEdges(int width, int height) {
 
 void RayCaster::setImage(std::shared_ptr<Image> imageInput) {
     image = std::move(imageInput);
-    initializeEdges(image->getWidth(), image->getHeight());
 }
 
 std::vector<Pixel::Coordinate> RayCaster::castRay(double xStart, double yStart, double xEnd, double yEnd) {
@@ -178,6 +176,9 @@ bool RayCaster::isInView(Camera camera, int x, int y) {
 }
 
 Pixel::Coordinate RayCaster::castRayDir(double xStart, double yStart, double xDir, double yDir) {
+    if(xDir == 0 && yDir == 0){
+        return {-1, -1};
+    }
     // DDA
     double d = sqrt(pow(xDir, 2) + pow(yDir, 2));
     xDir = xDir / d;
@@ -223,11 +224,11 @@ Pixel::Coordinate RayCaster::castRayDir(double xStart, double yStart, double xDi
         }
 
         // Determine if we should walk in the x or y direction and update the current pixel
-        if(currentRayLengthX < currentRayLengthY){
+        if(xDir != 0 && currentRayLengthX < currentRayLengthY){
             currentGridCoordinate.x += stepX;
             currentRayLengthX += unitStepSizeX;
         }
-        else{
+        else if(yDir != 0){
             currentGridCoordinate.y += stepY;
             currentRayLengthY += unitStepSizeY;
         }
@@ -237,6 +238,9 @@ Pixel::Coordinate RayCaster::castRayDir(double xStart, double yStart, double xDi
 }
 
 std::vector<std::pair<double, double>> RayCaster::generateDirections(Camera cam, int numDirs) {
+    if(numDirs == 1){
+        return {{cam.getDirection().first, cam.getDirection().second}};
+    }
 
     std::pair<double, double> currentVector = rotateVector(cam.getDirection(), -cam.getOpeningAngle() / 2);
     double division = cam.getOpeningAngle() < 360 ? numDirs - 1 : numDirs;

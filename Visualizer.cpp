@@ -103,7 +103,10 @@ void Visualizer::renderGrid() {
             SDL_Rect cellRect = { x * cellSize, y * cellSize, cellSize, cellSize };
             if (visiblePixels.find({x, y}) != visiblePixels.end()) {
                 SDL_SetRenderDrawColor(renderer, 0, 0, 139, 255); // Dark blue for visible pixels
-            } else if (image.getPixelType(x, y) != Pixel::EMPTY_SPACE) {
+            } else if(image.getPixelType(x, y) == Pixel::SURFACE){ // yellow for unseen surface
+                SDL_SetRenderDrawColor(renderer, 255, 165, 0, 255);
+            }
+            else if (image.getPixelType(x, y) != Pixel::EMPTY_SPACE) {
                 SDL_SetRenderDrawColor(renderer, 100, 149, 237, 255); // Medium blue for objects
             } else {
                 SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // White for empty space
@@ -180,7 +183,7 @@ void Visualizer::visualize() {
                 quit = true;
             } else if (event.type == SDL_KEYDOWN) {
                 if (event.key.keysym.sym == SDLK_s) {
-                    if (saveScreenshotBMP("screenshot.bmp")) {
+                    if (saveScreenshotBMP("screenshot7.bmp")) {
                         std::cout << "Screenshot saved successfully!" << std::endl;
                     } else {
                         std::cerr << "Failed to save screenshot." << std::endl;

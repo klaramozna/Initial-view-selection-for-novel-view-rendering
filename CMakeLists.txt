@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.28)
 project(Initial_view_selection_for_novel_view_rendering)
 
 set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
 include(FetchContent)
 FetchContent_Declare(
@@ -48,6 +49,8 @@ add_executable(Initial_view_selection_for_novel_view_rendering
         Visualizer.h
         ILPSolveMulti.cpp
         ILPSolveMulti.h
+        SolveLarge.cpp
+        SolveLarge.h
 )
 # Link Coin-OR libraries
 target_link_libraries(Initial_view_selection_for_novel_view_rendering

@@ -1,13 +1,13 @@
 #include "PlacementFind1.h"
 
-std::vector<Camera> PlacementFind1::solve() {
+std::vector<Camera> PlacementFind1::solve(int detail) {
     std::vector<Camera> result{};
 
     // Place cameras on the edges of the image
     std::pair<double, double> middle{im.getWidth() / 2.0, im.getHeight() / 2.0};
-    for(int x = 0; x < im.getWidth(); x++){
-        for(int y = 0; y < im.getHeight(); y++){
-            if(im.getPixelType(x, y) == Pixel::EMPTY_SPACE && (x == 0 || y == 0 || x == im.getWidth() - 1 || y == im.getHeight() - 1)){
+    for(int x = 0; x < im.getWidth(); x = x + detail){
+        for(int y = 0; y < im.getHeight(); y = y + detail){
+            if(x < im.getWidth() && y < im.getHeight() && im.getPixelType(x, y) == Pixel::EMPTY_SPACE && (x == 0 || y == 0 || x == im.getWidth() - 1 || y == im.getHeight() - 1)){
                 std::pair<double, double> dir{middle.first - (x + 0.5), middle.second - (y + 0.5)};
                 Camera cam{{x, y}, dir, cameraAngle};
                 rayCast.setCameraView(cam);

@@ -14,9 +14,10 @@ std::vector<Camera> CameraPlacementFinder::solveGreedyStrategy() {
     std::set<Pixel::Coordinate> uncoveredPixelsUnchanged = uncoveredPixels;
 
     std::vector<Camera> result{};
+    int numCameras = allCameras.size();
     while(!uncoveredPixels.empty()){
         // Check if any more cameras are left, if yes, this indicates there is no solution.
-        if(allCameras.empty()){
+        if(numCameras == 0){
             return{};
         }
         // Find the camera that "sees" the largest number of uncovered pixels and add it to the result.
@@ -33,10 +34,12 @@ std::vector<Camera> CameraPlacementFinder::solveGreedyStrategy() {
         for(int i = 0; i < allCameras.size(); i++){
             if(allCameras[i].first == nextCam){
                 allCameras[i].second = false;
+                numCameras--;
             }
         }
     }
-    return removeRedundantCameras(result, uncoveredPixelsUnchanged);
+    result = removeRedundantCameras(result, uncoveredPixelsUnchanged);
+    return result;
 }
 
 Camera CameraPlacementFinder::getBestSubset(const std::set<Pixel::Coordinate>& uncoveredPixels) {
